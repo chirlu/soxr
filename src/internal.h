@@ -17,8 +17,11 @@
 #define AL(a) array_length(a)
 #define iAL(a) (int)AL(a)
 #define sqr(a) ((a) * (a))
+
 #ifdef __GNUC__
-#define UNUSED __attribute__ ((unused))
+  #define UNUSED __attribute__ ((unused))
+#else
+  #define UNUSED
 #endif
 
 #if defined NDEBUG
