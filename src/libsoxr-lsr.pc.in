@@ -7,5 +7,5 @@ Name: lib${LSR}
 Description: ${DESCRIPTION_SUMMARY} (with libsamplerate-like bindings)
 Requires: libsoxr
 Version: ${PROJECT_VERSION}
-Libs: -L${LIB_INSTALL_DIR} -l${LSR}
-Cflags: -I${INCLUDE_INSTALL_DIR}
+Libs: -L${CMAKE_INSTALL_PREFIX}/lib -l${LSR}
+Cflags: -I${CMAKE_INSTALL_PREFIX}/include
