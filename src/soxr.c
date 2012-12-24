@@ -101,8 +101,8 @@ soxr_quality_spec_t soxr_quality_spec(unsigned long recipe, unsigned long flags)
     quality = 0;
   p->phase = "\62\31\144"[(recipe & 0x30)>>8];
   p->anti_aliasing_pc = 100;
-  p->bits = !quality? 0: quality < 3? 16 : quality < 8? 4 + quality * 4 : 55 - quality * 4;
-  rej = p->bits * linear_to_dB(2.);
+  p->precision = !quality? 0: quality < 3? 16 : quality < 8? 4 + quality * 4 : 55 - quality * 4;
+  rej = p->precision * linear_to_dB(2.);
   p->flags = flags;
   if (quality < 8) {
     p->bw_pc = quality == 1? LOW_Q_BW0_PC : 100 - 5 / TO_3dB(rej);
@@ -244,7 +244,7 @@ soxr_t soxr_create(
     p->seed = (unsigned long)time(0) ^ (unsigned long)p;
 
 #if HAVE_SINGLE_PRECISION
-    if (!HAVE_DOUBLE_PRECISION || (p->q_spec.bits <= 20 && !(p->q_spec.flags & SOXR_DOUBLE_PRECISION))
+    if (!HAVE_DOUBLE_PRECISION || (p->q_spec.precision <= 20 && !(p->q_spec.flags & SOXR_DOUBLE_PRECISION))
 #if HAVE_VR
         || (p->q_spec.flags & SOXR_VR)
 #endif

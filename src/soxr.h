@@ -219,9 +219,9 @@ struct soxr_io_spec {                                            /* Typically */
 
 
 struct soxr_quality_spec {                                       /* Typically */
-  double bits;               /* Required bit-accuracy (pass + stop).    20    */
+  double precision;          /* Conversion precision (in bits).         20    */
   double phase;              /* Linear/minimum etc. phase. [0,100]      50    */
-  double bw_pc;              /* Pass-band % (0dB pt.) to preserve.     91.3   */
+  double bw_pc;              /* Band-width % (0dB pt.) to preserve.    91.3   */
   double anti_aliasing_pc;   /* % bandwidth without aliasing.           100   */
   void * e;                  /* Reserved for internal use.               0    */
   unsigned long flags;       /* Per the following #defines.              0    */
@@ -233,7 +233,7 @@ struct soxr_quality_spec {                                       /* Typically */
 
 #define SOXR_MAINTAIN_3DB_PT   4u  /* Reserved for internal use. */
 #define SOXR_HI_PREC_CLOCK     8u  /* Increase `irrational' ratio accuracy. */
-#define SOXR_DOUBLE_PRECISION 16u  /* Use double prec. even @ bitdepths <= 20.*/
+#define SOXR_DOUBLE_PRECISION 16u  /* Use D.P. calcs even if precision <= 20. */
 #define SOXR_VR               32u  /* Experimental, variable-rate resampling. */
 
 

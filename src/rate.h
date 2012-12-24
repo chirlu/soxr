@@ -698,7 +698,7 @@ static char const * rate_create(
   return rate_init(
       channel, shared,
       io_ratio,
-      q_spec->bits,
+      q_spec->precision,
       q_spec->phase,
       q_spec->bw_pc,
       q_spec->anti_aliasing_pc,
