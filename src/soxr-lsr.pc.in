@@ -3,9 +3,9 @@ exec_prefix=${CMAKE_INSTALL_PREFIX}
 libdir=${LIB_INSTALL_DIR}
 includedir=${INCLUDE_INSTALL_DIR}
 
-Name: lib${LSR}
+Name: ${LSR}
 Description: ${DESCRIPTION_SUMMARY} (with libsamplerate-like bindings)
 Requires: libsoxr
 Version: ${PROJECT_VERSION}
-Libs: -L${CMAKE_INSTALL_PREFIX}/lib -l${LSR}
-Cflags: -I${CMAKE_INSTALL_PREFIX}/include
+Libs: -L${LIB_INSTALL_DIR} -l${LSR}
+Cflags: -I${INCLUDE_INSTALL_DIR}

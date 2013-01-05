@@ -50,8 +50,10 @@ cmake_dependent_option (WITH_AVFFT "Use libavcodec (LGPL) for SIMD DFT." OFF
 cmake_dependent_option (WITH_PFFFT "Use PFFFT (BSD-like licence) for SIMD DFT." ON
   "WITH_SIMD;NOT WITH_AVFFT" OFF)
 if (UNIX)
-  cmake_dependent_option (BUILD_LSR_TESTS "Build LSR tests." OFF
-    "WITH_LSR_BINDINGS" OFF)
+  if (EXISTS ${PROJECT_SOURCE_DIR}/lsr-tests)
+    cmake_dependent_option (BUILD_LSR_TESTS "Build LSR tests." OFF
+      "WITH_LSR_BINDINGS" OFF)
+  endif ()
 endif ()
 
 
@@ -178,10 +180,15 @@ endif ()
 
 # Installation configuration:
 
-set (LIB_SUFFIX "" CACHE STRING "Define suffix of libraries directory name (32 or 64).")
-set (BIN_INSTALL_DIR "bin" CACHE PATH "The subdirectory to the binaries." FORCE)
-set (LIB_INSTALL_DIR "lib${LIB_SUFFIX}" CACHE PATH "The subdirectory to the libraries." FORCE)
-set (INCLUDE_INSTALL_DIR "include" CACHE PATH "The subdirectory to the headers." FORCE)
+if (NOT DEFINED BIN_INSTALL_DIR)
+  set (BIN_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/bin")
+endif ()
+if (NOT DEFINED LIB_INSTALL_DIR)
+  set (LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+endif ()
+if (NOT DEFINED INCLUDE_INSTALL_DIR)
+  set (INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include")
+endif ()
 
 if (APPLE)
   option (BUILD_FRAMEWORK "Build an OS X framework." OFF)
@@ -270,7 +277,7 @@ if (UNIX)
   set (CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
 
   set (CPACK_SOURCE_GENERATOR "TBZ2")
-  set (CPACK_SOURCE_IGNORE_FILES "/Debug/;/Release/;/cpack/;\\\\.swp$;\\\\.gitignore")
+  set (CPACK_SOURCE_IGNORE_FILES "/lsr-tests/;/Debug/;/Release/;/cpack/;\\\\.swp$;\\\\.gitignore;/\\\\.git/")
 
   include (CPack)
 
