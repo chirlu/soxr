@@ -11,31 +11,20 @@
 
 #if defined SOXR_LIB
 
-extern struct {
-  void * (* forward_setup)(int);
-  void * (* backward_setup)(int);
-  void (* delete_setup)(void *);
-  void (* forward)(int, void *, sample_t *, sample_t *);
-  void (* oforward)(int, void *, sample_t *, sample_t *);
-  void (* backward)(int, void *, sample_t *, sample_t *);
-  void (* obackward)(int, void *, sample_t *, sample_t *);
-  void (* convolve)(int, void *, sample_t *, sample_t const *);
-  void (* convolve_portion)(int, sample_t *, sample_t const *);
-  int (* multiplier)(void);
-  void (* reorder_back)(int, void *, sample_t *, sample_t *);
-} RDFT_CB;
+typedef void (* fn_t)(void);
+extern fn_t RDFT_CB[11];
 
-#define rdft_forward_setup (*RDFT_CB.forward_setup)
-#define rdft_backward_setup (*RDFT_CB.backward_setup)
-#define rdft_delete_setup (*RDFT_CB.delete_setup)
-#define rdft_forward (*RDFT_CB.forward)
-#define rdft_oforward (*RDFT_CB.oforward)
-#define rdft_backward (*RDFT_CB.backward)
-#define rdft_obackward (*RDFT_CB.obackward)
-#define rdft_convolve (*RDFT_CB.convolve)
-#define rdft_convolve_portion (*RDFT_CB.convolve_portion)
-#define rdft_multiplier (*RDFT_CB.multiplier)
-#define rdft_reorder_back (*RDFT_CB.reorder_back)
+#define rdft_forward_setup    (*(void * (*)(int))RDFT_CB[0])
+#define rdft_backward_setup   (*(void * (*)(int))RDFT_CB[1])
+#define rdft_delete_setup     (*(void (*)(void *))RDFT_CB[2])
+#define rdft_forward          (*(void (*)(int, void *, sample_t *, sample_t *))RDFT_CB[3])
+#define rdft_oforward         (*(void (*)(int, void *, sample_t *, sample_t *))RDFT_CB[4])
+#define rdft_backward         (*(void (*)(int, void *, sample_t *, sample_t *))RDFT_CB[5])
+#define rdft_obackward        (*(void (*)(int, void *, sample_t *, sample_t *))RDFT_CB[6])
+#define rdft_convolve         (*(void (*)(int, void *, sample_t *, sample_t const *))RDFT_CB[7])
+#define rdft_convolve_portion (*(void (*)(int, sample_t *, sample_t const *))RDFT_CB[8])
+#define rdft_multiplier       (*(int (*)(void))RDFT_CB[9])
+#define rdft_reorder_back     (*(void (*)(int, void *, sample_t *, sample_t *))RDFT_CB[10])
 
 #endif
 
@@ -427,7 +416,7 @@ static char const * rate_init(
   p->factor = factor;
   if (bits) while (!n++) {                               /* Determine stages: */
     int try, L, M, x, maxL = interpolator > 0? 1 : mode? 2048 :
-      (int)ceil(DBL max_coefs_size * 1000. / (U100_l * sizeof(sample_t)));
+      (int)ceil((double)max_coefs_size * 1000. / (U100_l * sizeof(sample_t)));
     double d, epsilon = 0, frac;
     upsample = arbM < 1;
     for (i = (int)(arbM * .5), shift = 0; i >>= 1; arbM *= .5, ++shift);
@@ -545,7 +534,7 @@ static char const * rate_init(
       arb_stage.shared->poly_fir_coefs = prepare_coefs(
           coefs, num_coefs, phases, order, multiplier);
       lsx_debug("fir_len=%i phases=%i coef_interp=%i size=%.3gk",
-          num_coefs, phases, order, DBL coefs_size / 1000.);
+          num_coefs, phases, order, (double)coefs_size / 1000.);
       free(coefs);
     }
     multiplier = 1;
@@ -718,7 +707,6 @@ static char const * id(void)
   return RATE_ID;
 }
 
-typedef void (* fn_t)(void);
 fn_t RATE_CB[] = {
   (fn_t)rate_input,
   (fn_t)rate_process,

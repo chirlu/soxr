@@ -32,7 +32,6 @@
 #if LONG_MAX > 2147483647L
   #define int32_t int
   #define int64_t long
-  #define DBL (double)
 #elif LONG_MAX < 2147483647L
 #error this library requires that 'long int' has at least 32-bits
 #else
@@ -42,7 +41,6 @@
   #else
     #define int64_t long long
   #endif
-  #define DBL
 #endif
 #define uint32_t unsigned int32_t
 #define uint64_t unsigned int64_t
