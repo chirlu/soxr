@@ -44,5 +44,4 @@ int main(int argc, char const * arg[])
 
   free(out);                                                      /* Tidy up. */
   return !!error;
-  (void)argc, (void)arg;                         /* Not used in this example. */
 }
