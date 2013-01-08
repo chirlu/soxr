@@ -276,8 +276,8 @@ if (UNIX)
   set (CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
   set (CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
 
-  set (CPACK_SOURCE_GENERATOR "TBZ2")
-  set (CPACK_SOURCE_IGNORE_FILES "/lsr-tests/;/Debug/;/Release/;/cpack/;\\\\.swp$;\\\\.gitignore;/\\\\.git/")
+  set (CPACK_SOURCE_GENERATOR "TGZ")
+  set (CPACK_SOURCE_IGNORE_FILES "dist;/lsr-tests/;/Debug/;/Release/;/cpack/;\\\\.swp$;\\\\.gitignore;/\\\\.git/")
 
   include (CPack)
 
