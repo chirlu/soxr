@@ -1,0 +1,8 @@
+#!/bin/sh
+
+rm -rf Release
+./go
+cd Release
+make package_source
+gunzip *.tar.gz
+xz *.tar
