@@ -11,7 +11,7 @@ del/f CMakeCache.txt
 mkdir %build%
 cd %build%
 
-cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=%build% -DBUILD_TESTS=ON ..
+cmake -G "NMake Makefiles" -DCMAKE_BUILD_TYPE=%build% ..
 if errorlevel 1 goto end
 
 nmake

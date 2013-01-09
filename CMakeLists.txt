@@ -34,7 +34,7 @@ if (NOT CMAKE_BUILD_TYPE)
   set (CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif ()
 
-option (BUILD_TESTS "Build sanity-tests."  OFF)
+option (BUILD_TESTS "Build sanity-tests."  ON)
 option (BUILD_SHARED_LIBS "Build shared libraries." ON)
 option (BUILD_EXAMPLES "Build examples." OFF)
 option (WITH_OPENMP "Include OpenMP threading." ON)
@@ -189,6 +189,13 @@ endif ()
 if (NOT DEFINED INCLUDE_INSTALL_DIR)
   set (INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include")
 endif ()
+if (NOT DEFINED DOC_INSTALL_DIR)
+  if (UNIX)
+    set (DOC_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/share/doc/lib${PROJECT_NAME}")
+  else ()
+    set (DOC_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/doc")
+  endif ()
+endif ()
 
 if (APPLE)
   option (BUILD_FRAMEWORK "Build an OS X framework." OFF)
@@ -213,6 +220,8 @@ include_directories (${PROJECT_BINARY_DIR})
 if (BUILD_TESTS OR BUILD_LSR_TESTS)
   enable_testing ()
 endif ()
+
+install (FILES ${CMAKE_CURRENT_SOURCE_DIR}/README ${CMAKE_CURRENT_SOURCE_DIR}/LICENCE DESTINATION ${DOC_INSTALL_DIR})
 
 
 

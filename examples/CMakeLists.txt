@@ -32,3 +32,6 @@ endforeach ()
 if (${BUILD_TESTS} AND ${WITH_LSR_BINDINGS})
   add_test (lsr-bindings 1a-lsr)
 endif ()
+
+file (GLOB INSTALL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.[cCh])
+install (FILES ${INSTALL_SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/README DESTINATION ${DOC_INSTALL_DIR}/examples)

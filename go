@@ -10,6 +10,6 @@ rm -f CMakeCache.txt             # Prevent interference from any in-tree build
 mkdir -p $build
 cd $build
 
-cmake -DCMAKE_BUILD_TYPE=$build -DBUILD_TESTS=ON .. &&
+cmake -DCMAKE_BUILD_TYPE=$build .. &&
   make &&
     (make test || echo "FAILURE details in $build/Testing/Temporary/LastTest.log")
