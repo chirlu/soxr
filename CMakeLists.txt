@@ -105,10 +105,6 @@ if (WITH_AVFFT)
   endif ()
 endif ()
 
-if (EXISTS ${PROJECT_SOURCE_DIR}/src/vr32.c)
-  set (HAVE_VR 1)
-endif ()
-
 check_function_exists (lrint HAVE_LRINT)
 check_include_files (fenv.h HAVE_FENV_H)
 test_big_endian (WORDS_BIGENDIAN)
@@ -121,7 +117,7 @@ macro (make_exist)
   endforeach ()
 endmacro ()
 
-make_exist (HAVE_LRINT HAVE_FENV_H WORDS_BIGENDIAN HAVE_SIMD HAVE_VR)
+make_exist (HAVE_LRINT HAVE_FENV_H WORDS_BIGENDIAN HAVE_SIMD)
 make_exist (HAVE_SINGLE_PRECISION HAVE_DOUBLE_PRECISION HAVE_AVFFT)
 
 

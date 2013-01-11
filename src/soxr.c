@@ -231,16 +231,11 @@ soxr_t soxr_create(
 
 #if HAVE_SINGLE_PRECISION
     if (!HAVE_DOUBLE_PRECISION || (p->q_spec.precision <= 20 && !(p->q_spec.flags & SOXR_DOUBLE_PRECISION))
-#if HAVE_VR
-        || (p->q_spec.flags & SOXR_VR)
-#endif
-        ) {
+        || (p->q_spec.flags & SOXR_VR)) {
       p->deinterleave = (deinterleave_t)_soxr_deinterleave_f;
       p->interleave = (interleave_t)_soxr_interleave_f;
       memcpy(&p->control_block,
-#if HAVE_VR
           (p->q_spec.flags & SOXR_VR)? &_soxr_vr32_cb :
-#endif
 #if HAVE_SIMD
           cpu_has_simd()? &_soxr_rate32s_cb :
 #endif
