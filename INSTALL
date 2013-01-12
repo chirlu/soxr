@@ -77,4 +77,4 @@ Autotools-based systems might find it useful to create a file called
   cmake -DBUILD_SHARED_LIBS=OFF .
 (or with other build options as required).
 
-For MS visual studio, see msvc/README 
+For MS visual studio, see msvc/README
