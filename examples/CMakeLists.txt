@@ -30,7 +30,7 @@ foreach (fe ${SOURCES} ${LSR_SOURCES})
 endforeach ()
 
 if (${BUILD_TESTS} AND ${WITH_LSR_BINDINGS})
-  add_test (lsr-bindings 1a-lsr)
+  add_test (lsr-bindings ${BIN}1a-lsr)
 endif ()
 
 file (GLOB INSTALL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.[cCh])
