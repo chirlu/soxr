@@ -12,7 +12,7 @@ foreach (file ${files})
   message (STATUS "Deinstalling \"${dest}\"")
   if (EXISTS "${dest}" OR IS_SYMLINK "${dest}")
     execute_process (
-      COMMAND @CMAKE_COMMAND@ -E remove "${dest}"
+      COMMAND "@CMAKE_COMMAND@" -E remove "${dest}"
       OUTPUT_VARIABLE rm_out
       RESULT_VARIABLE rm_retval
     )
