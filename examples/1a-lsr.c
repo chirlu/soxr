@@ -16,7 +16,7 @@ int main(int argc, char const * arg[])
   double orate = argc > 2? atof(arg[2]) : 2;             /* by a factor of 2. */
 
   size_t olen = (size_t)(AL(in) * orate / irate + .5);   /* Assay output len. */
-  float * out = malloc(sizeof(*out) * olen);       /* Allocate output buffer. */
+  float * out = (float *)malloc(sizeof(*out) * olen); /* Allocate output buf. */
 
   int error, i = 0;
   SRC_DATA data;
