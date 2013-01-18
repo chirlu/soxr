@@ -104,7 +104,7 @@ static char const * const names[] = {"LSR best sinc", "LSR medium sinc", "LSR fa
 char const * src_get_name(unsigned n)         {return n < 5u + !getenv("SOXR_LSR_STRICT")? names[n] : 0;}
 char const * src_get_description(unsigned id) {return src_get_name(id);}
 char const * src_get_version(void)            {return soxr_version();}
-char const * src_strerror(soxr_error_t error) {return error == (soxr_error_t)1? "Placeholder." : sizeof(int) >= sizeof(char *)? soxr_strerror(error) : "error";}
+char const * src_strerror(soxr_error_t error) {return error == (soxr_error_t)1? "Placeholder." : sizeof(int) >= sizeof(char *) || !error ? soxr_strerror(error) : "soxr error";}
 int src_is_valid_ratio(double oi_ratio)       {return getenv("SOXR_LSR_STRICT")? oi_ratio >= 1./256 && oi_ratio <= 256 : oi_ratio > 0;}
 soxr_error_t src_error(soxr_t p)              {return soxr_error(p);}
 soxr_error_t src_reset(soxr_t p)              {return soxr_clear(p);}
