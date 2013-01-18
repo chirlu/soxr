@@ -18,11 +18,11 @@ tmp=`mktemp -d`
 
 build_examples() {
   if [ x"$arg" = x ]; then
-    echo "Using local src:" # for when dev pkg not installed
+    echo "Examples in `pwd`; using local headers:" # for when dev pkg not installed
     libs=-l$1
     cflags=-I$dir/src 
   else
-    echo "Using pkg-config:"
+    echo "Examples in `pwd`; using pkg-config:"
     libs=$(pkg-config --libs $1)
     cflags=$(pkg-config --cflags $1)
   fi
