@@ -11,8 +11,8 @@ set (DESCRIPTION_SUMMARY "High quality, one-dimensional sample-rate conversion l
 # Release versioning:
 
 set (PROJECT_VERSION_MAJOR 0)
-set (PROJECT_VERSION_MINOR 0)
-set (PROJECT_VERSION_PATCH 5)
+set (PROJECT_VERSION_MINOR 1)
+set (PROJECT_VERSION_PATCH 0)
 
 # For shared-object; if, since the last public release:
 #  * library code changed at all: ++revision
