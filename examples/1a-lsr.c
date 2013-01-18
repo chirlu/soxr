@@ -28,9 +28,9 @@ int main(int argc, char const * arg[])
   data.src_ratio = orate / irate;
   error = src_simple(&data, SRC_SINC_FASTEST, 1);
 
-  while (i++ < data.output_frames_gen)     /* Print out the resampled data... */
+  while (i++ < data.output_frames_gen)       /* Print out the resampled data, */
     printf("%5.2f%c", out[i-1], " \n"[!(i&7) || i == data.output_frames_gen]);
-  puts(src_strerror(error));                  /* ...and the reported result. */
+  printf("%-26s %s\n", arg[0], src_strerror(error));  /* and reported result. */
 
   free(out);                                                      /* Tidy up. */
   return !!error;

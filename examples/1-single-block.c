@@ -37,10 +37,10 @@ int main(int argc, char const * arg[])
       out, olen, &odone,                             /* Output. */
       NULL, NULL, NULL);                             /* Default configuration.*/
 
-  unsigned i = 0;                          /* Print out the resampled data... */
+  unsigned i = 0;                            /* Print out the resampled data, */
   while (i++ < odone)
     printf("%5.2f%c", out[i-1], " \n"[!(i&7) || i == odone]);
-  puts(soxr_strerror(error));                  /* ...and the reported result. */
+  printf("%-26s %s\n", arg[0], soxr_strerror(error)); /* and reported result. */
 
   free(out);                                                      /* Tidy up. */
   return !!error;
