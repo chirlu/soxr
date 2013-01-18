@@ -3,41 +3,50 @@ set -e
 # SoX Resampler Library       Copyright (c) 2007-13 robs@users.sourceforge.net
 # Licence for this file: LGPL v2.1                  See LICENCE for details.
 
-# Sanity-check of library installed on unix-like system
+# Sanity-check of sub-library installed on unix-like system
 
+arg="$1" # path to installed examples (if dev pkg installed); otherwise omitted
 dir="$(dirname $(readlink -f $0))"
 
 # Find the examples:
-src="$1"
+src="$arg"
 test x"$src" = x && src="$dir/examples"
 cd $src
 
 # Somewhere to put the binaries:
 tmp=`mktemp -d`
 
+build_examples() {
+  if [ x"$arg" = x ]; then
+    echo "Using local src:" # for when dev pkg not installed
+    libs=-l$1
+    cflags=-I$dir/src 
+  else
+    echo "Using pkg-config:"
+    libs=$(pkg-config --libs $1)
+    cflags=$(pkg-config --cflags $1)
+  fi
+  for f in ?$2-*.[cC]; do
+    cc=cc; echo $f | grep -q C$ && cc=c++
+    out=$tmp/`echo $f | sed "s/.[cC]$//"`
+    cmd="$cc $cflags -o $out $f $libs"
+    echo $cmd; $cmd
+  done
+}
+
 # Determine library:
 if [ `basename $0` = inst-check-soxr ]; then
-  libs=$(pkg-config --libs soxr)
+  build_examples soxr
+  gen="dd if=/dev/urandom count=1000"
+  $tmp/1-single-block
+  $gen 2> /dev/null | $tmp/2-stream                     2>&1 >$tmp/stdout
+  $gen 2> /dev/null | $tmp/3-options-input-fn 6 7 2 2 0 2>&1 >$tmp/stdout
+  $gen 2> /dev/null | $tmp/4-split-channels   7 6 2 2 3 2>&1 >$tmp/stdout
+  $gen 2> /dev/null | $tmp/5-variable-rate              2>&1 >$tmp/stdout
 else
-  libs=$(pkg-config --libs soxr-lsr)
-  a=a # Files for soxr-lsr have 'a' suffix on example number.
+  build_examples soxr-lsr a # lsr has 'a' suffix on example number.
+  $tmp/1a-lsr
 fi
-
-# Build the examples for this lib, C then C++ (if any):
-stat -t ?$a-*.c >/dev/null 2>&1 && for f in ?$a-*.c; do
-  echo "cc -I\"$src\" $f $libs -o $tmp/$f.out"
-  cc -I"$src" $f $libs -o $tmp/$f.out
-done
-stat -t ?$a-*.C >/dev/null 2>&1 && for f in ?$a-*.C; do
-  echo "c++ -I\"$src\" $f $libs -o $tmp/$f.out"
-  c++ -I"$src" $f $libs -o $tmp/$f.out
-done
-
-# Run one example:
-for f in $tmp/1*.out; do
-  echo $f
-  $f
-done
 
 # Tidy up:
 rm -rf $tmp
