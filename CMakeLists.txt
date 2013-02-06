@@ -130,9 +130,10 @@ if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
   if (CMAKE_BUILD_TYPE STREQUAL "Release")
     set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -s") # strip
   endif ()
-  #option (VISIBILITY_HIDDEN "Build with -fvisibility=hidden." ON)
+  cmake_dependent_option (VISIBILITY_HIDDEN "Build with -fvisibility=hidden." ON
+    "BUILD_SHARED_LIBS" OFF)
   if (VISIBILITY_HIDDEN)
-    add_definitions (-fvisibility=hidden)
+    add_definitions (-fvisibility=hidden -DSOXR_VISIBILITY)
   endif ()
 endif ()
 
