@@ -27,7 +27,7 @@ make_exist (HAVE_FFTW HAVE_SNDFILE)
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 include_directories (${CMAKE_CURRENT_BINARY_DIR})
 
-add_library (tests_lib SHARED util calc_snr)
+add_library (tests_lib STATIC util calc_snr)
 
 link_libraries (tests_lib ${PROJECT_NAME}-lsr)
 
