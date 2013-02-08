@@ -51,7 +51,8 @@ soxr_t src_callback_new(soxr_input_fn_t fn, unsigned id, int channels, SRC_ERROR
   soxr = soxr_create(0, 0, (unsigned)channels, &error, 0, &q_spec, &r_spec);
   if (soxr)
     error = soxr_set_input_fn(soxr, fn, p, 0);
-  *(int *)error0 = (int)(ptrdiff_t)error;
+  if (error0)
+    *(int *)error0 = (int)(ptrdiff_t)error;
   return soxr;
 }
 
