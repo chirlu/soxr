@@ -15,7 +15,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/* Wrapper mostly compatible with `libsamplerate'.
+/* Wrapper compatible with `libsamplerate' (constant-rate).
  * (Libsoxr's native API can be found in soxr.h).  */
 
 #if !defined SAMPLERATE_H
