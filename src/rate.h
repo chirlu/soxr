@@ -298,6 +298,7 @@ static void dft_stage_init(
 {
   dft_filter_t * f = &p->shared->dft_filter[instance];
   int num_taps = 0, dft_length = f->dft_length, i;
+  bool f_domain_m = abs(3-M) == 1 && Fs <= 1;
 
   if (!dft_length) {
     int k = phase == 50 && lsx_is_power_of_2(L) && Fn == L? L << 1 : 4;
@@ -325,7 +326,7 @@ static void dft_stage_init(
   if (!f->dft_length) {
     void * coef_setup = rdft_forward_setup(dft_length);
     int Lp = lsx_is_power_of_2(L)? L : 1;
-    int Mp = lsx_is_power_of_2(M)? M : 1;
+    int Mp = f_domain_m? M : 1;
     f->dft_forward_setup = rdft_forward_setup(dft_length / Lp);
     f->dft_backward_setup = rdft_backward_setup(dft_length / Mp);
     if (Mp == 1)
@@ -343,9 +344,9 @@ static void dft_stage_init(
   p->type = dft_stage;
   p->fn = dft_stage_fn;
   p->preload = f->post_peak / L;
-  p->at.integer    = f->post_peak % L;
+  p->at.integer = f->post_peak % L;
   p->L = L;
-  p->step.integer = abs(3-M) == 1 && Fs == 1 && 1? -M/2 : M;
+  p->step.integer = f_domain_m? -M/2 : M;
   p->dft_filter_num = instance;
   p->block_len = f->dft_length - (f->num_taps - 1);
   p->phase0 = p->at.integer / p->L;
