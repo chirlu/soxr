@@ -412,7 +412,8 @@ static char const * rate_init(
   assert(!bits || (15 <= bits && bits <= 33));
   assert(0 <= phase && phase <= 100);
   assert(53 <= bw_pc && bw_pc <= 100);
-  assert(85 <= anti_aliasing_pc && anti_aliasing_pc <= 100);
+  assert(85 <= anti_aliasing_pc && anti_aliasing_pc <= 130);
+  assert(bw_pc < 200 - anti_aliasing_pc);
 
   p->factor = factor;
   if (bits) while (!n++) {                               /* Determine stages: */
