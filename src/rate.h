@@ -7,9 +7,9 @@
 #include <stdlib.h>
 
 #include "filter.h"
-#include "internal.h"
 
 #if defined SOXR_LIB
+#include "internal.h"
 
 typedef void (* fn_t)(void);
 extern fn_t RDFT_CB[11];

@@ -6,7 +6,9 @@
 #if !defined ccrw2_included
 #define ccrw2_included
 
+#if defined SOXR_LIB
 #include "internal.h"
+#endif
 
 #if defined _OPENMP
 
