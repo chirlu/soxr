@@ -60,10 +60,19 @@ input or output (e.g. ilen, olen).                                            */
 
 
 
+/* --------------------------- Version management --------------------------- */
+
+/* E.g. #if SOXR_THIS_VERSION >= SOXR_VERSION(0,1,1) ...                      */
+#define SOXR_VERSION(x,y,z)     (((x)<<16)|((y)<<8)|(z))
+#define SOXR_THIS_VERSION       SOXR_VERSION(0,1,0)
+#define SOXR_THIS_VERSION_STR               "0.1.0"
+
+
+
 /* --------------------------- Type declarations ---------------------------- */
 
-typedef struct soxr * soxr_t;        /* A resampler for 1 or more channels. */
-typedef char const * soxr_error_t;     /* 0:no-error; non-0:error. */
+typedef struct soxr * soxr_t;          /* A resampler for 1 or more channels. */
+typedef char const * soxr_error_t;                /* 0:no-error; non-0:error. */
 
 typedef void       * soxr_buf_t;  /* 1 buffer of channel-interleaved samples. */
 typedef void const * soxr_cbuf_t;                        /* Ditto; read-only. */
@@ -80,7 +89,7 @@ typedef void       * soxr_out_t;     /* Either a soxr_buf_t or soxr_bufs_t,
 
 /* --------------------------- API main functions --------------------------- */
 
-SOXR char const    * soxr_version(void);  /* Query library version: "x.y.z". */
+SOXR char const * soxr_version(void);  /* Query library version: "libsoxr-x.y.z" */
 
 #define soxr_strerror(e)               /* Soxr counterpart to strerror. */     \
     ((e)?(e):"no error")

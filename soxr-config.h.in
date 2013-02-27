@@ -4,7 +4,6 @@
 #if !defined soxr_config_included
 #define soxr_config_included
 
-#define SOXR_VERSION         "@PROJECT_VERSION@"
 #define HAVE_SINGLE_PRECISION @HAVE_SINGLE_PRECISION@
 #define HAVE_DOUBLE_PRECISION @HAVE_DOUBLE_PRECISION@
 #define HAVE_AVFFT            @HAVE_AVFFT@

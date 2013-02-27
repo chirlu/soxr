@@ -7,7 +7,6 @@
 #if !defined soxr_config_included
 #define soxr_config_included
 
-#define SOXR_VERSION         "0.1.0"
 #define HAVE_SINGLE_PRECISION 1
 #define HAVE_DOUBLE_PRECISION 1
 #define HAVE_AVFFT            0

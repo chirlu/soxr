@@ -14,7 +14,7 @@
 
 char const * soxr_version(void)
 {
-  return "libsoxr-" SOXR_VERSION;
+  return "libsoxr-" SOXR_THIS_VERSION_STR;
 }
 
 
