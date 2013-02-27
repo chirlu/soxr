@@ -221,12 +221,12 @@ struct soxr_io_spec {                                            /* Typically */
 
 
 struct soxr_quality_spec {                                       /* Typically */
-  double precision;          /* Conversion precision (in bits).         20    */
-  double phase;              /* Linear/minimum etc. phase. [0,100]      50    */
-  double bw_pc;              /* Band-width % (0dB pt.) to preserve.    91.3   */
-  double anti_aliasing_pc;   /* % bandwidth without aliasing.           100   */
-  void * e;                  /* Reserved for internal use.               0    */
-  unsigned long flags;       /* Per the following #defines.              0    */
+  double precision;         /* Conversion precision (in bits).           20   */
+  double phase_response;    /* 0=minimum, ... 50=linear, ... 100=maximum 50   */
+  double passband_end;      /* 0dB pt. bandwidth to preserve; nyquist=1  0.913*/
+  double stopband_begin;    /* Aliasing/imaging control; > passband_end   1   */
+  void * e;                 /* Reserved for internal use.                 0   */
+  unsigned long flags;      /* Per the following #defines.                0   */
 };
 
 #define SOXR_ROLLOFF_SMALL     0u    /* <= 0.01 dB */

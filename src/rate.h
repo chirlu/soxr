@@ -369,7 +369,7 @@ typedef struct {
 #define have_post_stage (postM * postL != 1)
 
 #define TO_3dB(a)       ((1.6e-6*a-7.5e-4)*a+.646)
-#define LOW_Q_BW0_PC    (67 + 5 / 8.)
+#define LOW_Q_BW0       (1385 / 2048.) /* 0.67625 rounded to be a FP exact. */
 
 typedef enum {
   rolloff_none, rolloff_small /* <= 0.01 dB */, rolloff_medium /* <= 0.35 dB */
@@ -385,9 +385,9 @@ static char const * rate_init(
   double factor,             /* Input rate divided by output rate.            */
   double bits,               /* Required bit-accuracy (pass + stop)  16|20|28 */
   double phase,              /* Linear/minimum etc. filter phase.       50    */
-  double bw_pc,              /* Pass-band % (0dB pt.) to preserve.   91.3|98.4*/
-  double anti_aliasing_pc,   /* % bandwidth without aliasing            100   */
-  rolloff_t rolloff,    /* Pass-band roll-off                    small   */
+  double passband_end,       /* 0dB pt. bandwidth to preserve; nyquist=1 0.913*/
+  double stopband_begin,     /* Aliasing/imaging control; > passband_end  1   */
+  rolloff_t rolloff,         /* Pass-band roll-off                    small   */
   bool maintain_3dB_pt,      /*                                        true   */
   double multiplier,         /* Linear gain to apply during conversion.   1   */
 
@@ -400,20 +400,20 @@ static char const * rate_init(
   int log2_large_dft_size)
 {
   double att = (bits + 1) * linear_to_dB(2.), attArb = att;    /* pass + stop */
-  double tbw0 = 1 - bw_pc / 100, Fs_a = 2 - anti_aliasing_pc / 100;
+  double tbw0 = 1 - passband_end, Fs_a = stopband_begin;
   double arbM = factor, tbw_tighten = 1;
   int n = 0, i, preL = 1, preM = 1, shift = 0, arbL = 1, postL = 1, postM = 1;
   bool upsample = false, rational = false, iOpt = !noSmallIntOpt;
-  int mode = rolloff > rolloff_small? factor > 1 || bw_pc > LOW_Q_BW0_PC:
+  int mode = rolloff > rolloff_small? factor > 1 || passband_end > LOW_Q_BW0:
     (int)ceil(2 + (bits - 17) / 4);
   stage_t * s;
 
   assert(factor > 0);
   assert(!bits || (15 <= bits && bits <= 33));
   assert(0 <= phase && phase <= 100);
-  assert(53 <= bw_pc && bw_pc <= 100);
-  assert(85 <= anti_aliasing_pc && anti_aliasing_pc <= 130);
-  assert(bw_pc < 200 - anti_aliasing_pc);
+  assert(.53 <= passband_end);
+  assert(stopband_begin <= 1.2);
+  assert(passband_end + .005 < stopband_begin);
 
   p->factor = factor;
   if (bits) while (!n++) {                               /* Determine stages: */
@@ -690,9 +690,9 @@ static char const * rate_create(
       channel, shared,
       io_ratio,
       q_spec->precision,
-      q_spec->phase,
-      q_spec->bw_pc,
-      q_spec->anti_aliasing_pc,
+      q_spec->phase_response,
+      q_spec->passband_end,
+      q_spec->stopband_begin,
       "\1\2\0"[q_spec->flags & 3],
       !!(q_spec->flags & SOXR_MAINTAIN_3DB_PT),
       scale,

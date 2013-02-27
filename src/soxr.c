@@ -69,7 +69,7 @@ struct soxr {
 
 /* TODO: these should not be here. */
 #define TO_3dB(a)       ((1.6e-6*a-7.5e-4)*a+.646)
-#define LOW_Q_BW0_PC    (67 + 5 / 8.)
+#define LOW_Q_BW0       (1385 / 2048.) /* 0.67625 rounded to be a FP exact. */
 
 soxr_quality_spec_t soxr_quality_spec(unsigned long recipe, unsigned long flags)
 {
@@ -85,24 +85,24 @@ soxr_quality_spec_t soxr_quality_spec(unsigned long recipe, unsigned long flags)
     quality = 6;
   else if (quality > 10)
     quality = 0;
-  p->phase = "\62\31\144"[(recipe & 0x30)>>8];
-  p->anti_aliasing_pc = 100;
+  p->phase_response = "\62\31\144"[(recipe & 0x30)>>8];
+  p->stopband_begin = 1;
   p->precision = !quality? 0: quality < 3? 16 : quality < 8? 4 + quality * 4 : 55 - quality * 4;
   rej = p->precision * linear_to_dB(2.);
   p->flags = flags;
   if (quality < 8) {
-    p->bw_pc = quality == 1? LOW_Q_BW0_PC : 100 - 5 / TO_3dB(rej);
+    p->passband_end = quality == 1? LOW_Q_BW0 : 1 - .05 / TO_3dB(rej);
     if (quality <= 2)
       p->flags &= ~SOXR_ROLLOFF_NONE, p->flags |= SOXR_ROLLOFF_MEDIUM;
   }
   else {
-    static float const bw[] = {93.1f, 83.2f, 66.3f};
-    p->bw_pc = bw[quality - 8];
+    static float const bw[] = {.931f, .832f, .663f};
+    p->passband_end = bw[quality - 8];
     if (quality - 8 == 2)
       p->flags &= ~SOXR_ROLLOFF_NONE, p->flags |= SOXR_ROLLOFF_MEDIUM;
   }
   if (recipe & SOXR_STEEP_FILTER)
-    p->bw_pc = 100 - 1 / TO_3dB(rej);
+    p->passband_end = 1 - .01 / TO_3dB(rej);
   return spec;
 }
 
@@ -217,6 +217,14 @@ soxr_t soxr_create(
 
   if (p) {
     p->q_spec = q_spec? *q_spec : soxr_quality_spec(SOXR_HQ, 0);
+
+    if (q_spec) { /* Backwards compatibility with original API: */
+      if (p->q_spec.passband_end > 2)
+        p->q_spec.passband_end /= 100;
+      if (p->q_spec.stopband_begin > 2)
+        p->q_spec.stopband_begin = 2 - p->q_spec.stopband_begin / 100;
+    }
+
     p->io_ratio = io_ratio;
     p->num_channels = num_channels;
     if (io_spec)
