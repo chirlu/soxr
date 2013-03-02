@@ -2,7 +2,7 @@
 # SoX Resampler Library       Copyright (c) 2007-13 robs@users.sourceforge.net
 # Licence for this file: LGPL v2.1                  See LICENCE for details.
 
-case $1 in -j*) j=$1; shift;; esac # support -jX for parallel build/test
+case $1 in -j*) j=$1; shift;; esac    # Support -jX for parallel build/test
 
 build=$1
 test x$build = x && build=Release

@@ -41,7 +41,7 @@ if [ `basename $0` = inst-check-soxr ]; then
   $tmp/1-single-block
   $gen 2> /dev/null | $tmp/2-stream                     2>&1 >$tmp/stdout
   $gen 2> /dev/null | $tmp/3-options-input-fn 6 7 2 2 0 2>&1 >$tmp/stdout
-  $gen 2> /dev/null | $tmp/4-split-channels   7 6 2 2 3 2>&1 >$tmp/stdout # expect clipping
+  $gen 2> /dev/null | $tmp/4-split-channels   7 6 2 2 3 2>&1 >$tmp/stdout  # Clipping expected here
   $gen 2> /dev/null | $tmp/5-variable-rate              2>&1 >$tmp/stdout
 else
   build_examples soxr-lsr a # lsr has 'a' suffix on example number.
