@@ -32,6 +32,9 @@ int main(int argc, char const * arg[])
     printf("%5.2f%c", out[i-1], " \n"[!(i&7) || i == data.output_frames_gen]);
   printf("%-26s %s\n", arg[0], src_strerror(error));  /* and reported result. */
 
+  if (argc > 3)                                     /* Library version check: */
+    printf("runtime=%s\n", src_get_version());
+
   free(out);                                                      /* Tidy up. */
   return !!error;
 }
