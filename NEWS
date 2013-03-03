@@ -1,6 +1,7 @@
-Version 0.1.1 (2013-03-02)
+Version 0.1.1 (2013-03-03)
   * Minor fixes/improvements to build/tests.
-  * Fix crash when null error pointer passed to src_create (lsr bindings only).
+  * Fix crash (e.g. with k3b) when null error pointer passed to src_create (lsr
+    bindings only).
   * Fix broken resampling in many cases with SIMD and anti_aliasing_pc < 100.
   * For clarity, renamed and slightly changed usage of three parameters in
     soxr_quality_spec_t (ABI compatible, API incompatible).  An application not

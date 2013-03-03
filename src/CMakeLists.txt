@@ -59,7 +59,7 @@ endif ()
 
 if (WITH_LSR_BINDINGS)
   set (LSR ${PROJECT_NAME}-lsr)
-  set (LSR_SO_VERSION 0.1.8)
+  set (LSR_SO_VERSION 0.1.9)
   set (LSR_SO_VERSION_MAJOR 0)
   add_library (${LSR} ${LIB_TYPE} lsr)
   target_link_libraries (${LSR} ${PROJECT_NAME})

@@ -12,7 +12,7 @@ set (DESCRIPTION_SUMMARY "High quality, one-dimensional sample-rate conversion l
 
 set (PROJECT_VERSION_MAJOR 0)
 set (PROJECT_VERSION_MINOR 1)
-set (PROJECT_VERSION_PATCH 0)
+set (PROJECT_VERSION_PATCH 1)
 
 # For shared-object; if, since the last public release:
 #  * library code changed at all: ++revision
@@ -20,9 +20,9 @@ set (PROJECT_VERSION_PATCH 0)
 #  * interfaces added:            ++age
 #  * interfaces removed:          age = 0
 
-set (SO_VERSION_CURRENT  0)
+set (SO_VERSION_CURRENT  1)
 set (SO_VERSION_REVISION 0)
-set (SO_VERSION_AGE      0)
+set (SO_VERSION_AGE      1)
 
 
 
