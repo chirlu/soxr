@@ -29,7 +29,7 @@ build_examples() {
   for f in ?$2-*.[cC]; do
     cc=cc; echo $f | grep -q C$ && cc=c++
     out=$tmp/`echo $f | sed "s/.[cC]$//"`
-    cmd="$cc $cflags -o $out $f $libs"
+    cmd="$cc $cflags -o $out $f $libs -lm"
     echo $cmd; $cmd
   done
 }
