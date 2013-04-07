@@ -85,7 +85,7 @@ soxr_quality_spec_t soxr_quality_spec(unsigned long recipe, unsigned long flags)
     quality = 6;
   else if (quality > 10)
     quality = 0;
-  p->phase_response = "\62\31\144"[(recipe & 0x30)>>8];
+  p->phase_response = "\62\31\144"[(recipe & 0x30) >> 4];
   p->stopband_begin = 1;
   p->precision = !quality? 0: quality < 3? 16 : quality < 8? 4 + quality * 4 : 55 - quality * 4;
   rej = p->precision * linear_to_dB(2.);
