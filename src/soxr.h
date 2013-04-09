@@ -259,8 +259,8 @@ struct soxr_runtime_spec {                                       /* Typically */
 };
                                    /* For `irrational' ratios only: */
 #define SOXR_COEF_INTERP_AUTO  0u    /* Auto select coef. interpolation. */
-#define SOXR_COEF_INTERP_LOW   1u    /* Man. select: less CPU, more memory. */
-#define SOXR_COEF_INTERP_HIGH  2u    /* Man. select: more CPU, less memory. */
+#define SOXR_COEF_INTERP_LOW   2u    /* Man. select: less CPU, more memory. */
+#define SOXR_COEF_INTERP_HIGH  3u    /* Man. select: more CPU, less memory. */
 
 #define SOXR_STRICT_BUFFERING  4u  /* Reserved for future use. */
 #define SOXR_NOSMALLINTOPT     8u  /* For test purposes only. */
