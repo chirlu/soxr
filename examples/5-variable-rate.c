@@ -88,7 +88,7 @@ int main(int argc, char *arg[])
     soxr_delete(soxr);
   }
                                                               /* Diagnostics: */
-  fprintf(stderr, "%-26s %s; I/O: %s\n", arg[0],
-      soxr_strerror(error), errno? strerror(errno) : "no error");
-  return error || errno;
+  fprintf(stderr, "%-26s %s; I/O: %s\n", arg[0], soxr_strerror(error),
+      ferror(stdin) || ferror(stdout)? strerror(errno) : "no error");
+  return !!error;
 }

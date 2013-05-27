@@ -104,7 +104,8 @@ int main(int n, char const * arg[])
   soxr_delete(soxr);
   free(obuf), free(ibuf);
                                                               /* Diagnostics: */
-  fprintf(stderr, "%-26s %s; %lu clips; I/O: %s\n", arg0, soxr_strerror(error),
-      (long unsigned)clips, errno? strerror(errno) : "no error");
-  return error || errno;
+  fprintf(stderr, "%-26s %s; %lu clips; I/O: %s\n",
+      arg0, soxr_strerror(error), (long unsigned)clips,
+      ferror(stdin) || ferror(stdout)? strerror(errno) : "no error");
+  return !!error;
 }

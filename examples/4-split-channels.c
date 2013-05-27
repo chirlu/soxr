@@ -141,7 +141,8 @@ int main(int n, char const * arg[])
   free(obuf), free(ibuf), free(obufs), free(ibufs);
   free(obuf_ptrs), free(ibuf_ptrs);
                                                               /* Diagnostics: */
-  fprintf(stderr, "%-26s %s; %lu clips; I/O: %s\n", arg0, soxr_strerror(error),
-      (long unsigned)clips, errno? strerror(errno) : "no error");
-  return error || errno;
+  fprintf(stderr, "%-26s %s; %lu clips; I/O: %s\n",
+      arg0, soxr_strerror(error), (long unsigned)clips,
+      ferror(stdin) || ferror(stdout)? strerror(errno) : "no error");
+  return !!error;
 }
