@@ -1,6 +1,21 @@
 # SoX Resampler Library       Copyright (c) 2007-13 robs@users.sourceforge.net
 # Licence for this file: LGPL v2.1                  See LICENCE for details.
 
+
+
+# Can generate vr-coefs.h but it complicates cross-compiling & non-cmake builds
+
+if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/vr-coefs.h)
+  include_directories(${CMAKE_CURRENT_BINARY_DIR})
+  set_property(SOURCE vr32.c APPEND PROPERTY OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/vr-coefs.h)
+  add_executable (vr-coefs vr-coefs.c)
+  ADD_CUSTOM_COMMAND(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/vr-coefs.h
+    COMMAND vr-coefs > ${CMAKE_CURRENT_BINARY_DIR}/vr-coefs.h
+    DEPENDS vr-coefs)
+endif ()
+
+
+
 add_definitions (${PROJECT_C_FLAGS} -DSOXR_LIB)
 
 
