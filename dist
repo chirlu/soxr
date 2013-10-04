@@ -5,6 +5,7 @@ set -e
 
 # Makes the distribution tarball
 
+test $# = 1 -o `git status -s|wc -c` = 0
 rm -rf Release
 ./go -j4
 cd Release
