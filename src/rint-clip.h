@@ -61,7 +61,7 @@ static size_t LSX_RINT_CLIP(void * * const dest0, FLOATX const * const src,
   for (i = 0; i < (n & ~7u);) {
     COPY_SEED1;
     DITHER_VARS;
-    _ _ _ _ _ _ _ _ 0;
+    _ _ _ _ _ _ _ _ (void)0;
     if (fe_test_invalid()) {
       fe_clear_invalid();
       RINT_CLIP(dest, src, 1, i - 8, i, &clips PASS_SEED1);
@@ -74,11 +74,11 @@ static size_t LSX_RINT_CLIP(void * * const dest0, FLOATX const * const src,
   double d;
   for (i = 0; i < (n & ~7u);) {
     DITHER_VARS;
-    _ _ _ _ _ _ _ _ 0;
+    _ _ _ _ _ _ _ _ (void)0;
   }
   {
     DITHER_VARS;
-    for (; i < n; _ 0);
+    for (; i < n; _ (void)0);
   }
 #endif
   SAVE_SEED;
@@ -104,7 +104,7 @@ static size_t LSX_RINT_CLIP_2(void * * dest0, FLOATX const * const * srcs,
     for (i = 0; i < (n & ~7u);) {
       COPY_SEED1;
       DITHER_VARS;
-      _ _ _ _ _ _ _ _ 0;
+      _ _ _ _ _ _ _ _ (void)0;
       if (fe_test_invalid()) {
         fe_clear_invalid();
         RINT_CLIP(dest, src, stride, i - 8, i, &clips PASS_SEED1);
@@ -120,11 +120,11 @@ static size_t LSX_RINT_CLIP_2(void * * dest0, FLOATX const * const * srcs,
     FLOATX const * const src = srcs[j];
     for (i = 0; i < (n & ~7u);) {
       DITHER_VARS;
-      _ _ _ _ _ _ _ _ 0;
+      _ _ _ _ _ _ _ _ (void)0;
     }
     {
       DITHER_VARS;
-      for (; i < n; _ 0);
+      for (; i < n; _ (void)0);
     }
   }
 #endif
