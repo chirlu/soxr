@@ -1,4 +1,4 @@
-/* SoX Resampler Library      Copyright (c) 2007-13 robs@users.sourceforge.net
+/* SoX Resampler Library      Copyright (c) 2007-14 robs@users.sourceforge.net
  * Licence for this file: LGPL v2.1                  See LICENCE for details. */
 
 #include <math.h>
@@ -447,7 +447,7 @@ static char const * rate_init(
 
   p->num_stages = shift + have_pre_stage + have_arb_stage + have_post_stage;
   if (!p->num_stages && multiplier != 1) {
-    arbL = 0;
+    bits = arbL = 0;                         /* Use cubic_stage in this case. */
     ++p->num_stages;
   }
   p->stages = calloc((size_t)p->num_stages + 1, sizeof(*p->stages));
@@ -483,7 +483,7 @@ static char const * rate_init(
         log2_min_dft_size, log2_large_dft_size);
   }
 
-  if (!bits && have_arb_stage) {                /* Quick and dirty arb stage: */
+  if (!bits && have_arb_stage) {                  /* `Quick' cubic arb stage: */
     arb_stage.type = cubic_stage;
     arb_stage.fn = cubic_stage_fn;
     arb_stage.mult = multiplier, multiplier = 1;
