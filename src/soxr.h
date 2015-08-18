@@ -313,7 +313,19 @@ SOXR soxr_io_spec_t soxr_io_spec(
 
 
 
-/* --------------------------- Internal use only ---------------------------- */
+/* --------------------------- Advanced use only ---------------------------- */
+
+/* For new designs, the following functions/usage will probably not be needed.
+ * They might be useful when adding soxr into an existing design where values
+ * for the resampling-rate and/or number-of-channels parameters to soxr_create
+ * are not available when that function will be called.  In such cases, the
+ * relevant soxr_create parameter(s) can be given as 0, then one or both of the
+ * following (as appropriate) later invoked (but prior to calling soxr_process
+ * or soxr_output):
+ *
+ * soxr_set_error(soxr, soxr_set_io_ratio(soxr, io_ratio, 0));
+ * soxr_set_error(soxr, soxr_set_num_channels(soxr, num_channels));
+ */
 
 SOXR soxr_error_t soxr_set_error(soxr_t, soxr_error_t);
 SOXR soxr_error_t soxr_set_num_channels(soxr_t, unsigned);
