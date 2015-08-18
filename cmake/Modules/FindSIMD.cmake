@@ -40,12 +40,18 @@
 include (CheckCSourceCompiles)
 include (FindPackageHandleStandardArgs)
 
+if (WIN32) # Safety for when mixed lib/app compilers (but performance hit)
+  set (GCC_WIN32_SIMD_OPTS "-mincoming-stack-boundary=2")
+endif ()
+
 set (SIMD_C_FLAG_CANDIDATES
-  # Microsoft Visual Studio x64
+  # x64
   " "
   # Microsoft Visual Studio x86
   "/arch:SSE /fp:fast -D__SSE__"
-  # Gnu
+  # Gcc x86
+  "-msse -mfpmath=sse ${GCC_WIN32_SIMD_OPTS}"
+  # Gcc x86 (old versions)
   "-msse -mfpmath=sse"
 )
 

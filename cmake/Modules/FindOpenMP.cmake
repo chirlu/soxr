@@ -9,7 +9,9 @@
 #
 # Supported compilers can be found at http://openmp.org/wp/openmp-compilers/
 #
-# Modified for libsoxr not to rely on presence of C++ compiler.
+# Modifications for soxr:
+#   * don't rely on presence of C++ compiler
+#   * support MINGW
 #
 #=============================================================================
 # Copyright 2009 Kitware, Inc.
@@ -103,6 +105,11 @@ set (OpenMP_C_FLAGS "${OpenMP_C_FLAGS_INTERNAL}"
 
 # handle the standard arguments for find_package
 find_package_handle_standard_args (OpenMP DEFAULT_MSG
-  OpenMP_C_FLAGS OpenMP_C_FLAGS)
+  OpenMP_C_FLAGS)
 
-mark_as_advanced (OpenMP_C_FLAGS)
+if (MINGW)
+  set (OpenMP_SHARED_LINKER_FLAGS "${OpenMP_SHARED_LINKER_FLAGS} ${OpenMP_C_FLAGS}")
+  set (OpenMP_EXE_LINKER_FLAGS "${OpenMP_EXE_LINKER_FLAGS} ${OpenMP_C_FLAGS}")
+endif ()
+
+mark_as_advanced (OpenMP_C_FLAGS OpenMP_SHARED_LINKER_FLAGS OpenMP_EXE_LINKER_FLAGS)
