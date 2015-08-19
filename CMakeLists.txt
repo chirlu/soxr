@@ -2,6 +2,7 @@
 # Licence for this file: LGPL v2.1                  See LICENCE for details.
 
 cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
+cmake_policy (SET CMP0022 OLD)
 
 project (soxr C)
 set (DESCRIPTION_SUMMARY "High quality, one-dimensional sample-rate conversion library")
