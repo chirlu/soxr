@@ -20,9 +20,8 @@
 #include "vr-coefs.h"
 
 #define FADE_LEN_BITS     9
-#define PHASE_BITS_D      (8 + PHASE_MORE)
-#define PHASE_BITS_U      (7 + PHASE_MORE)
-#define PHASE_MORE        0 /* 2 improves small int, and large u, ratios. */
+#define PHASE_BITS_D      10
+#define PHASE_BITS_U      9
 
 #define PHASES0_D         12
 #define POLY_FIR_LEN_D    20
