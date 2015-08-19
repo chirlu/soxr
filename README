@@ -8,8 +8,8 @@ should look elsewhere.
 It aims to give fast¹ and very high quality² results for any constant
 (rational or irrational) resampling ratio.  Phase-response, preserved
 bandwidth, aliasing, and rejection level parameters are all configurable;
-alternatively, simple `preset' configurations may be selected.  An
-experimental, variable-rate resampling mode of operation is also included.
+alternatively, simple `preset' configurations may be selected.  A
+variable-rate resampling mode of operation is also included.
 
 The resampler is currently available either as part of `libsox' (the audio
 file-format and effect library), or stand-alone as `libsoxr' (this package).

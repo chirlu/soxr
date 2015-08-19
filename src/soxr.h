@@ -190,8 +190,8 @@ SOXR soxr_error_t soxr_oneshot(
 
 
 
-/* For variable-rate resampling (experimental). See example # 5 for how to
- * create a variable-rate resampler and how to use this function. */
+/* For variable-rate resampling. See example # 5 for how to create a
+ * variable-rate resampler and how to use this function. */
 
 SOXR soxr_error_t soxr_set_io_ratio(soxr_t, double io_ratio, size_t slew_len);
 
@@ -245,7 +245,7 @@ struct soxr_quality_spec {                                       /* Typically */
 #define SOXR_MAINTAIN_3DB_PT   4u  /* Reserved for internal use. */
 #define SOXR_HI_PREC_CLOCK     8u  /* Increase `irrational' ratio accuracy. */
 #define SOXR_DOUBLE_PRECISION 16u  /* Use D.P. calcs even if precision <= 20. */
-#define SOXR_VR               32u  /* Experimental, variable-rate resampling. */
+#define SOXR_VR               32u  /* Variable-rate resampling. */
 
 
 

@@ -1,11 +1,10 @@
 /* SoX Resampler Library      Copyright (c) 2007-13 robs@users.sourceforge.net
  * Licence for this file: LGPL v2.1                  See LICENCE for details. */
 
-/* Example 5:  Variable-rate resampling (N.B. experimental).  A test signal
- * (held in a buffer) is resampled over a wide range of octaves.  Resampled
- * data is sent to stdout as raw, float32 samples.  Choices of 2 test-signals
- * and of 2 ways of varying the sample-rate are combined in a command-line
- * option:
+/* Example 5:  Variable-rate resampling.  A test signal (held in a buffer) is
+ * resampled over a wide range of octaves.  Resampled data is sent to stdout as
+ * raw, float32 samples.  Choices of 2 test-signals and of 2 ways of varying
+ * the sample-rate are combined in a command-line option:
  *
  * Usage: ./5-variable-rate [0|1|2|3]
  */
