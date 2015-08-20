@@ -108,7 +108,7 @@ char const * src_get_version(void)            {return soxr_version();}
 char const * src_strerror(soxr_error_t error) {return error == (soxr_error_t)1? "Placeholder." : sizeof(int) >= sizeof(char *) || !error ? soxr_strerror(error) : "soxr error";}
 int src_is_valid_ratio(double oi_ratio)       {return getenv("SOXR_LSR_STRICT")? oi_ratio >= 1./256 && oi_ratio <= 256 : oi_ratio > 0;}
 soxr_error_t src_error(soxr_t p)              {return soxr_error(p);}
-soxr_error_t src_reset(soxr_t p)              {return soxr_clear(p);}
+soxr_error_t src_reset(soxr_t p)              {return soxr_clear0(p, 0);}
 soxr_t src_delete(soxr_t p)                   {soxr_delete(p); return 0;}
 soxr_error_t src_set_ratio(soxr_t p, double oi_ratio) {return soxr_set_io_ratio(p, 1/oi_ratio, 0);}
 soxr_t src_new(unsigned id, int channels, SRC_ERROR * error) {return src_callback_new(0, id, channels, error, 0);}

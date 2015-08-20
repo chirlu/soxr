@@ -391,7 +391,7 @@ void soxr_delete(soxr_t p)
 
 
 
-soxr_error_t soxr_clear(soxr_t p) /* TODO: this, properly. */
+soxr_error_t soxr_clear0(soxr_t p, int set_ratio) /* TODO: this, properly. */
 {
   if (p) {
     struct soxr tmp = *p;
@@ -406,9 +406,16 @@ soxr_error_t soxr_clear(soxr_t p) /* TODO: this, properly. */
     memcpy(p->control_block, tmp.control_block, sizeof(p->control_block));
     p->deinterleave = tmp.deinterleave;
     p->interleave = tmp.interleave;
-    return 0;
+    return set_ratio? soxr_set_io_ratio(p, tmp.io_ratio, 0) : 0;
   }
   return "invalid soxr_t pointer";
+}
+
+
+
+soxr_error_t soxr_clear(soxr_t p)
+{
+  return soxr_clear0(p, 1);
 }
 
 

@@ -332,6 +332,12 @@ SOXR soxr_error_t soxr_set_num_channels(soxr_t, unsigned);
 
 
 
+/* --------------------------- Internal use only ---------------------------- */
+
+SOXR soxr_error_t soxr_clear0(soxr_t, int);
+
+
+
 #undef SOXR
 
 #if defined __cplusplus
