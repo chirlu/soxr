@@ -29,7 +29,7 @@ int main(int argc, char *arg[])
   int opt = argc <= 1? 2 : (atoi(arg[1]) & 3), saw = opt & 1, fm = opt & 2;
   float ibuf[10 << OCTAVES], obuf[AL(ibuf)];
   int i, wl = 2 << OCTAVES;
-  size_t ilen = AL(ibuf), need_input = 1;
+  size_t ilen = AL(ibuf), need_input = 1, written;
   size_t odone, total_odone, total_olen = OLEN * FS;
   size_t olen1 = fm? 10 : AL(obuf); /* Small block-len if fast-changing ratio */
   soxr_error_t error;
@@ -69,7 +69,7 @@ int main(int argc, char *arg[])
       do {
         size_t len = need_input? ilen : 0;
         error = soxr_process(soxr, ibuf, len, NULL, obuf, block_len, &odone);
-        fwrite(obuf, sizeof(float), odone, stdout);
+        written = fwrite(obuf, sizeof(float), odone, stdout);
 
         /* Update counters for the current block and for the total length: */
         block_len -= odone;
@@ -79,7 +79,7 @@ int main(int argc, char *arg[])
          * again, supplying more input samples: */
         need_input = block_len != 0;
 
-      } while (need_input && !error);
+      } while (need_input && !error && written == odone);
 
       /* Now that the block for the current ioratio is complete, go back
        * round the main `for' loop in order to process the next block. */
