@@ -48,3 +48,5 @@ foreach (b ${test_bits})
 endforeach ()
 
 add_custom_target (test-vectors ALL DEPENDS ${vectors})
+
+add_test (1-delay-clear ${BIN}1-delay-clear)
