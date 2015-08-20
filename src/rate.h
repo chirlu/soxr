@@ -621,17 +621,19 @@ static void rate_flush(rate_t * p)
   uint64_t samples_out = (uint64_t)((double)p->samples_in / p->factor + .5);
 #endif
   size_t remaining = (size_t)(samples_out - p->samples_out);
-  sample_t * buff = calloc(1024, sizeof(*buff));
 
-  if (samples_out > p->samples_out) {
+  if ((size_t)fifo_occupancy(fifo) < remaining) {
+    uint64_t samples_in = p->samples_in;
+    sample_t * buff = calloc(1024, sizeof(*buff));
+
     while ((size_t)fifo_occupancy(fifo) < remaining) {
       rate_input(p, buff, 1024);
       rate_process(p);
     }
     fifo_trim_to(fifo, (int)remaining);
-    p->samples_in = 0;
+    p->samples_in = samples_in;
+    free(buff);
   }
-  free(buff);
 }
 
 static void rate_close(rate_t * p)
@@ -663,10 +665,10 @@ static double rate_delay(rate_t * p)
 {
 #if defined _MSC_VER && _MSC_VER == 1200
   double samples_out = (double)(int64_t)p->samples_in / p->factor;
-  return samples_out - (double)(int64_t)p->samples_out;
+  return max(0, samples_out - (double)(int64_t)p->samples_out);
 #else
   double samples_out = (double)p->samples_in / p->factor;
-  return samples_out - (double)p->samples_out;
+  return max(0, samples_out - (double)p->samples_out);
 #endif
 }
 
