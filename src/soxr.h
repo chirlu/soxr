@@ -95,7 +95,10 @@ SOXR char const * soxr_version(void);  /* Query library version: "libsoxr-x.y.z"
     ((e)?(e):"no error")
 
 
-/* Create a stream resampler: */
+/* Create a stream resampler; spec. defaults are as follows:
+ *   io      per soxr_io_spec(SOXR_FLOAT32_I, SOXR_FLOAT32_I)
+ *   quality per soxr_quality_spec(SOXR_HQ, 0)
+ *   runtime per soxr_runtime_spec(1)                                         */
 
 SOXR soxr_t soxr_create(
     double      input_rate,      /* Input sample-rate. */
@@ -176,7 +179,9 @@ SOXR void         soxr_delete(soxr_t);  /* Free resources. */
 
 
 /* `Short-cut', single call to resample a (probably short) signal held entirely
- * in memory.  See soxr_create and soxr_process above for parameter details. */
+ * in memory.  See soxr_create and soxr_process above for parameter details.
+ * Note that unlike soxr_create however, the default quality spec. for
+ * soxr_oneshot is per soxr_quality_spec(SOXR_LQ, 0). */
 
 SOXR soxr_error_t soxr_oneshot(
     double         input_rate,
