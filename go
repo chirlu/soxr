@@ -12,6 +12,6 @@ rm -f CMakeCache.txt             # Prevent interference from any in-tree build
 mkdir -p $build
 cd $build
 
-cmake -DCMAKE_BUILD_TYPE=$build .. &&
+cmake -DCMAKE_BUILD_TYPE=$build -Wno-dev .. &&
   make $j &&
     (ctest $j || echo "FAILURE details in $build/Testing/Temporary/LastTest.log")
