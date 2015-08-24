@@ -42,9 +42,9 @@ static void fir(int m, double l, double Fp0, double Fs0,
   double Fp=Fp0/l, Fs=Fs0/l, weight=1/weight0, inc[2], Ws=1-Fs;
   int N = (int)(l*m)-(l>1), R=(N+1)/2, NP=R+1, grid_size=1+density*R+1, pass=0;
   int n1 = Ws>=(2*R-1)*Fp? 1:(int)(R*Fp/(Fp+Ws)+.5), n2=NP-n1, _1, i, j, k;
-  int    * peak = malloc(sizeof(*peak) * (size_t)(NP+1)), * P=peak, end[2];
-  coef_t * coef = malloc(sizeof(*coef) * (size_t)(NP));
-  float  * E    = malloc(sizeof(*E   ) * (size_t)(grid_size));
+  int    * peak = calloc(sizeof(*peak), (size_t)(NP+1)), * P=peak, end[2];
+  coef_t * coef = calloc(sizeof(*coef), (size_t)(NP));
+  float  * E    = calloc(sizeof(*E   ), (size_t)(grid_size));
   double d, n, e, f, mult, delta, sum, hi, lo, * A = (double*)E, *h=0;
 
   if (!P || !coef || !E) goto END;
