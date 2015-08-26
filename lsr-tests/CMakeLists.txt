@@ -22,7 +22,7 @@ check_function_exists (alarm HAVE_ALARM)
 check_function_exists (signal HAVE_SIGNAL)
 check_include_files (sys/times.h HAVE_SYS_TIMES_H)
 make_exist (HAVE_LRINTF HAVE_ALARM HAVE_SIGNAL HAVE_SYS_TIMES_H)
-make_exist (HAVE_FFTW HAVE_SNDFILE)
+make_exist (HAVE_FFTW3 HAVE_SNDFILE)
 
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 include_directories (${CMAKE_CURRENT_BINARY_DIR})
