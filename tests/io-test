@@ -17,9 +17,11 @@ ex=./3-options-input-fn
 
 types=(f32 f64 s32 s16)
 
+zs=(160 160 160 120 180 180 120 120)
+
 do_one() {
   $ex $ir $or $c $1 $2 $3 < $c.${types[$1]} |
-  sox -t ${types[$2]} -r $or -c $c - -n spectrogram -X50 -hwk -z180 -o io$c$n.png
+  sox -t ${types[$2]} -r $or -c $c - -n spectrogram -X50 -hwk -z${zs[$n]} -o io$c$n.png
   n=`expr $n + 1`
 }
 
