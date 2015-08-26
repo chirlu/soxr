@@ -20,7 +20,7 @@ build_examples() {
   if [ x"$arg" = x ]; then
     echo "Examples in `pwd`; using local headers:" # for when dev pkg not installed
     libs=-l$1
-    cflags=-I$dir/src 
+    cflags=-I$dir/src
   else
     echo "Examples in `pwd`; using pkg-config:"
     libs=$(pkg-config --libs $1)

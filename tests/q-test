@@ -42,7 +42,7 @@ sox -r $rate1 -n -c $c 0.$ext synth 5: sin 0:$rate1n gain -1
 
 for q in `seq $q1 $q2`; do
 	echo $rate1 '-->' $rate2 c=$c q=$q
-       	time $tool $rate1 $rate2 $c $e $e $q < 0.$ext > /dev/null;
+	time $tool $rate1 $rate2 $c $e $e $q < 0.$ext > /dev/null;
 done
 echo $rate1 '-->' $rate2 c=$c q=v
 time $tool $rate1 $rate2 $c $e $e 4 20 < 0.$ext > /dev/null
