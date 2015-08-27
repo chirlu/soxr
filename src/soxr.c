@@ -67,6 +67,8 @@ struct soxr {
 
 
 
+#define RESET_ON_CLEAR   (1u<<31)
+
 /* TODO: these should not be here. */
 #define TO_3dB(a)       ((1.6e-6*a-7.5e-4)*a+.646)
 #define LOW_Q_BW0       (1385 / 2048.) /* 0.67625 rounded to be a FP exact. */
@@ -81,6 +83,7 @@ soxr_quality_spec_t soxr_quality_spec(unsigned long recipe, unsigned long flags)
     p->e = "invalid quality type";
     return spec;
   }
+  flags |= quality < SOXR_LSR0Q? RESET_ON_CLEAR : 0;
   if (quality == 13)
     quality = 6;
   else if (quality > 10)
@@ -406,7 +409,8 @@ soxr_error_t soxr_clear(soxr_t p) /* TODO: this, properly. */
     memcpy(p->control_block, tmp.control_block, sizeof(p->control_block));
     p->deinterleave = tmp.deinterleave;
     p->interleave = tmp.interleave;
-    return 0;
+    return (p->q_spec.flags & RESET_ON_CLEAR)?
+      soxr_set_io_ratio(p, tmp.io_ratio, 0) : 0;
   }
   return "invalid soxr_t pointer";
 }
