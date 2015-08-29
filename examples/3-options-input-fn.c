@@ -47,16 +47,17 @@ int main(int n, char const * arg[])
   double          const orate = n? --n, atof(*arg++) : 44100.;
   unsigned        const chans = n? --n, (unsigned)atoi(*arg++) : 1;
   soxr_datatype_t const itype = n? --n, (soxr_datatype_t)atoi(*arg++) : 0;
-  soxr_datatype_t const otype = n? --n, (soxr_datatype_t)atoi(*arg++) : 0;
+  unsigned        const ospec = n? --n, (soxr_datatype_t)atoi(*arg++) : 0;
   unsigned long const q_recipe= n? --n, strtoul(*arg++, 0, 16) : SOXR_HQ;
   unsigned long const q_flags = n? --n, strtoul(*arg++, 0, 16) : 0;
   double   const passband_end = n? --n, atof(*arg++) : 0;
   double const stopband_begin = n? --n, atof(*arg++) : 0;
   double const phase_response = n? --n, atof(*arg++) : -1;
   int       const use_threads = n? --n, atoi(*arg++) : 1;
+  soxr_datatype_t const otype = ospec & 3;
 
   soxr_quality_spec_t       q_spec = soxr_quality_spec(q_recipe, q_flags);
-  soxr_io_spec_t      const io_spec = soxr_io_spec(itype, otype);
+  soxr_io_spec_t            io_spec = soxr_io_spec(itype, otype);
   soxr_runtime_spec_t const runtime_spec = soxr_runtime_spec(!use_threads);
 
   /* Allocate resampling input and output buffers in proportion to the input
@@ -79,6 +80,7 @@ int main(int n, char const * arg[])
   if (passband_end   > 0) q_spec.passband_end   = passband_end / 100;
   if (stopband_begin > 0) q_spec.stopband_begin = stopband_begin / 100;
   if (phase_response >=0) q_spec.phase_response = phase_response;
+  io_spec.flags = ospec & ~7u;
 
   /* Create a stream resampler: */
   soxr = soxr_create(
