@@ -63,6 +63,7 @@ input or output (e.g. ilen, olen).                                            */
 /* --------------------------- Version management --------------------------- */
 
 /* E.g. #if SOXR_THIS_VERSION >= SOXR_VERSION(0,1,1) ...                      */
+
 #define SOXR_VERSION(x,y,z)     (((x)<<16)|((y)<<8)|(z))
 #define SOXR_THIS_VERSION       SOXR_VERSION(0,1,1)
 #define SOXR_THIS_VERSION_STR               "0.1.1"
@@ -95,10 +96,7 @@ SOXR char const * soxr_version(void);  /* Query library version: "libsoxr-x.y.z"
     ((e)?(e):"no error")
 
 
-/* Create a stream resampler; spec. defaults are as follows:
- *   io      per soxr_io_spec(SOXR_FLOAT32_I, SOXR_FLOAT32_I)
- *   quality per soxr_quality_spec(SOXR_HQ, 0)
- *   runtime per soxr_runtime_spec(1)                                         */
+/* Create a stream resampler: */
 
 SOXR soxr_t soxr_create(
     double      input_rate,      /* Input sample-rate. */
@@ -108,7 +106,11 @@ SOXR soxr_t soxr_create(
     soxr_error_t *,              /* To report any error during creation. */
     soxr_io_spec_t const *,      /* To specify non-default I/O formats. */
     soxr_quality_spec_t const *, /* To specify non-default resampling quality.*/
-    soxr_runtime_spec_t const *);/* To specify non-default runtime resources. */
+    soxr_runtime_spec_t const *);/* To specify non-default runtime resources.
+
+    Default io_spec      is per soxr_io_spec(SOXR_FLOAT32_I, SOXR_FLOAT32_I)
+    Default quality_spec is per soxr_quality_spec(SOXR_HQ, 0)
+    Default runtime_spec is per soxr_runtime_spec(1)                          */
 
 
 
