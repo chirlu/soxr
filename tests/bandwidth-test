@@ -22,14 +22,15 @@ rate1n=`expr $rate1 / 2`
 #sox -r $rate1 -n 0.$ext synth 1s sq pad .03 .03  gain -1
 sox -r $rate1 -n 0.$ext synth 8 sin 0:$rate1n gain -1
 
-for q in `seq 79 5 99`; do
-	f=bw1-$rate2-p`printf %02u $q`
-	$tool $rate1 $rate2 1 $e $e 4 0 $q < 0.$ext | sox -c1 -r$rate2 -t $ext - -n $spec $f.png
+for pass in `seq 79 5 99`; do
+	f=bw1-$rate2-p`printf %02u $pass`
+	$tool $rate1 $rate2 1 $e $e 4 0 $pass < 0.$ext | sox -c1 -r$rate2 -t $ext - -n $spec $f.png -c "bw-test pass:$pass stop:100"
 done
 
-for q in `seq 79 5 99`; do
-	f=bw2-$rate2-p`printf %02u $q`
-	$tool $rate1 $rate2 1 $e $e 4 0 $q `expr 200 - $q` < 0.$ext | sox -c1 -r$rate2 -t $ext - -n $spec $f.png
+for pass in `seq 79 5 99`; do
+	f=bw2-$rate2-p`printf %02u $pass`
+	stop=`expr 200 - $pass`
+	$tool $rate1 $rate2 1 $e $e 4 0 $pass $stop < 0.$ext | sox -c1 -r$rate2 -t $ext - -n $spec $f.png -c "bw-test pass:$pass stop:$stop"
 done
 
 r=$rate1; rate1=$rate2; rate2=$r

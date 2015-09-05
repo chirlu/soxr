@@ -37,7 +37,11 @@ rm *.f32
 
 
 # Exercise VR making sure that varied internal stage reconfigurations occur:
+variations=(slow-sweep fast-changing)
+signals=(sine-wave saw-tooth-wave)
 for n in 0 1 2 3; do
-  $vg ./5-variable-rate $n | sox -tf32 -r44100 -c1 - -n spectrogram -z130 -hwd -o v$n.png -X 50
+  signal=${signals[`expr $n % 2 || true`]}
+  variation=${variations[`expr $n / 2 || true`]}
+  $vg ./5-variable-rate $n | sox -tf32 -r44100 -c1 - -n spectrogram -z130 -hwd -o v$n.png -X 50 -c "variation:$variation signal:$signal"
   vg=""
 done
