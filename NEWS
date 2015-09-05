@@ -1,4 +1,4 @@
-Version 0.1.2 (2015-??-??)
+Version 0.1.2 (2015-09-05)
   * Fix conversion failure when I/O types differ but I/O rates don't.
   * Fix #defines for interpolation order selection.
   * Fix ineffectual SOXR_MINIMUM_PHASE and SOXR_INTERMEDIATE_PHASE in

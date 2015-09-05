@@ -65,8 +65,8 @@ input or output (e.g. ilen, olen).                                            */
 /* E.g. #if SOXR_THIS_VERSION >= SOXR_VERSION(0,1,1) ...                      */
 
 #define SOXR_VERSION(x,y,z)     (((x)<<16)|((y)<<8)|(z))
-#define SOXR_THIS_VERSION       SOXR_VERSION(0,1,1)
-#define SOXR_THIS_VERSION_STR               "0.1.1"
+#define SOXR_THIS_VERSION       SOXR_VERSION(0,1,2)
+#define SOXR_THIS_VERSION_STR               "0.1.2"
 
 
 
