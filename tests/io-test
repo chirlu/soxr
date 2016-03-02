@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# SoX Resampler Library       Copyright (c) 2007-15 robs@users.sourceforge.net
+# SoX Resampler Library       Copyright (c) 2007-16 robs@users.sourceforge.net
 # Licence for this file: LGPL v2.1                  See LICENCE for details.
 
 # Tests IO
@@ -20,8 +20,13 @@ types=(f32 f64 s32 s16)
 zs=(180 180 180 180 180 120 120 120 120)
 
 do_one() {
-  $tool $ir $or $c $1 $2 $3 < $c.${types[$1]} |
-  sox -t ${types[`expr $2 % 4`]} -r $or -c $c - -n spectrogram -X50 -hwk -z${zs[$n]} -o io$c$n.png -c "io-test i:${types[$1]} o:${types[`expr $2 % 4`]} ($2) q:$3"
+  it=${types[$1]}; ot=${types[`expr $2 % 4 || true`]}
+  $tool $ir $or $c $1 $2 $3 < $c.$it > a.$ot
+  sox -r $or -c $c a.$ot -n spectrogram -X50 -hwk -z${zs[$n]} -o io$c$n.png -c "io-test i:$it o:$ot ($2) q:$3"
+  ./4-split-channels $ir $or $c $1 $2 $3 < $c.$it > b.$ot
+  [ $2 != 3 ] && cmp a.$ot b.$ot ||
+    test $(sox -mv-1 -r$or -c$c a.$ot -r$or -c$c b.$ot -n stats 2>&1 |grep Pk\ l|tr ' ' '\n'|grep '[0-9]'|uniq) = -84.29
+  rm [ab].$ot
   n=`expr $n + 1`
 }
 

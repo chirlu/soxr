@@ -1,4 +1,4 @@
-/* SoX Resampler Library      Copyright (c) 2007-13 robs@users.sourceforge.net
+/* SoX Resampler Library      Copyright (c) 2007-16 robs@users.sourceforge.net
  * Licence for this file: LGPL v2.1                  See LICENCE for details. */
 
 /* Example 3: extends example 2 with multiple channels, multiple datatypes,
@@ -14,7 +14,7 @@
  *   OUTPUT-RATE      Ditto
  *   NUM-CHANNELS     Number of interleaved channels
  *   IN-DATATYPE#     0:float32 1:float64 2:int32 3:int16
- *   OUT-DATATYPE#    Ditto
+ *   OUT-DATATYPE#    Ditto; or 11 for un-dithered int16
  *   Q-RECIPE         Quality recipe (in hex) See soxr.h
  *   Q-FLAGS          Quality flags  (in hex) See soxr.h
  *   PASSBAND-END     %
