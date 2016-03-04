@@ -1,7 +1,7 @@
 /* SoX Resampler Library      Copyright (c) 2007-13 robs@users.sourceforge.net
  * Licence for this file: LGPL v2.1                  See LICENCE for details. */
 
-#include "pffft.c"
+#include "pffft-wrap.c"
 
 static void * setup(int len) {return pffft_new_setup(len, PFFFT_REAL);}
 static void forward  (int length, void * setup, float * h, float * scratch) {pffft_transform        (setup, h, h, scratch, PFFFT_FORWARD); (void)length;}

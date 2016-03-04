@@ -4,7 +4,7 @@
 #define _soxr_simd_aligned_free free
 #define _soxr_simd_aligned_malloc malloc
 #define PFFFT_SIMD_DISABLE
-#include "pffft.c"
+#include "pffft-wrap.c"
 #include "filter.h"
 
 static void * setup(int len) {return pffft_new_setup(len, PFFFT_REAL);}
