@@ -109,6 +109,7 @@ int main(int n, char const * arg[])
   size_t odone, written, need_input = 1, clips = 0;
   soxr_error_t error;
   soxr_t soxr;
+  unsigned i;
 
   /* Overrides (if given): */
   if (passband_end   > 0) q_spec.passband_end   = passband_end / 100;
@@ -119,7 +120,6 @@ int main(int n, char const * arg[])
   soxr = soxr_create(
       irate, orate, chans, &error, &io_spec, &q_spec, &runtime_spec);
 
-  unsigned i;
   for (i = 0; i < chans; ++i) {
     ibuf_ptrs[i] = iptr;
     obuf_ptrs[i] = optr;
