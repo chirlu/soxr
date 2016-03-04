@@ -9,6 +9,7 @@ set -e
 
 
 len=8
+w=$(echo -e "`sox --ver |sed 's/.*SoX v//'` d\n14.4.1 k"|sort -Vr|head -1|sed 's/.* //')
 #vg="valgrind --leak-check=full --show-reachable=yes"
 
 
@@ -42,6 +43,6 @@ signals=(sine-wave saw-tooth-wave)
 for n in 0 1 2 3; do
   signal=${signals[`expr $n % 2 || true`]}
   variation=${variations[`expr $n / 2 || true`]}
-  $vg ./5-variable-rate $n | sox -tf32 -r44100 -c1 - -n spectrogram -z130 -hwd -o v$n.png -X 50 -c "variation:$variation signal:$signal"
+  $vg ./5-variable-rate $n | sox -tf32 -r44100 -c1 - -n spectrogram -z130 -hw$w -o v$n-$w.png -X 50 -c "variation:$variation signal:$signal"
   vg=""
 done

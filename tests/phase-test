@@ -7,7 +7,8 @@ set -e
 # Tests varying phase-response.
 
 tool=./3-options-input-fn
-spec="spectrogram -z160 -Z-20 -X 2000 -wd -ho"
+w=$(echo -e "`sox --ver |sed 's/.*SoX v//'` d\n14.4.1 k"|sort -Vr|head -1|sed 's/.* //')
+spec="spectrogram -z160 -Z-20 -X 2000 -w$w -ho"
 ext=f32; e=0
 rate1=48000
 rate2=44100
@@ -20,7 +21,7 @@ for n in 1 2; do
 	filters=(standard-filter steep-filter)
 
 	for q in `seq 0 7`; do
-		f=ph-$rate2-q$q
+		f=ph-$rate2-q$q-$w
 		name=${names[`expr $q % 4 || true`]}
 		filter=${filters[`expr $q / 4 || true`]}
 		$tool $rate1 $rate2 1 $e $e $q'6' < 0.$ext | sox -c1 -r$rate2 -t $ext - -n $spec $f.png -c "ph-test $filter $name"
@@ -28,7 +29,7 @@ for n in 1 2; do
 
 	# Test specific phase-response percentages:
 	for q in `seq 0 20 100`; do
-		f=ph-$rate2-p`printf %03u $q`
+		f=ph-$rate2-p`printf %03u $q`-$w
 		$tool $rate1 $rate2 1 $e $e 46 0 0 0 $q < 0.$ext | sox -c1 -r$rate2 -t $ext - -n $spec $f.png -c "ph-test phase:${q}%"
 	done
 
