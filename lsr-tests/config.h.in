@@ -4,13 +4,13 @@
 #if !defined soxsrc_lsr_tests_config_included
 #define soxsrc_lsr_tests_config_included
 
-#define HAVE_ALARM @HAVE_ALARM@
-#define HAVE_FFTW3 @HAVE_FFTW3@
-#define HAVE_LRINTF @HAVE_LRINTF@
-#define HAVE_LRINT @HAVE_LRINT@
-#define HAVE_SIGNAL @HAVE_SIGNAL@
-#define HAVE_SNDFILE @HAVE_SNDFILE@
-#define HAVE_SYS_TIMES_H @HAVE_SYS_TIMES_H@
+#cmakedefine01 HAVE_ALARM
+#cmakedefine01 HAVE_FFTW3
+#cmakedefine01 HAVE_LRINTF
+#cmakedefine01 HAVE_LRINT
+#cmakedefine01 HAVE_SIGNAL
+#cmakedefine01 HAVE_SNDFILE
+#cmakedefine01 HAVE_SYS_TIMES_H
 
 #if HAVE_SIGNAL
   #include <signal.h>

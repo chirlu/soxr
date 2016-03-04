@@ -97,29 +97,19 @@ if (WITH_DOUBLE_PRECISION)
   set (HAVE_DOUBLE_PRECISION 1)
 endif ()
 
-if (WITH_AVFFT)
+if (WITH_AVFFT OR HAVE_SIMD)
   find_package (LibAVCodec)
   if (AVCODEC_FOUND)
     include_directories (${AVCODEC_INCLUDE_DIRS})
     link_libraries (${AVCODEC_LIBRARIES})
-    set (HAVE_AVFFT 1)
+    set (HAVE_AVFFT ${WITH_AVFFT})
+    set (HAVE_AVCODEC 1)
   endif ()
 endif ()
 
 check_function_exists (lrint HAVE_LRINT)
 check_include_files (fenv.h HAVE_FENV_H)
 test_big_endian (WORDS_BIGENDIAN)
-
-macro (make_exist)
-  foreach (x ${ARGN})
-    if (NOT ${x})
-      set (${x} 0)
-    endif ()
-  endforeach ()
-endmacro ()
-
-make_exist (HAVE_LRINT HAVE_FENV_H WORDS_BIGENDIAN HAVE_SIMD)
-make_exist (HAVE_SINGLE_PRECISION HAVE_DOUBLE_PRECISION HAVE_AVFFT)
 
 
 
