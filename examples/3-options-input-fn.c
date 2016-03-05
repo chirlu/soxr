@@ -42,7 +42,7 @@ static size_t input_fn(input_context_t * p, soxr_cbuf_t * buf, size_t len)
 
 int main(int n, char const * arg[])
 {
-  char const *     const arg0 = n? --n, *arg++ : "";
+  char const *     const arg0 = n? --n, *arg++ : "", * engine = "";
   double          const irate = n? --n, atof(*arg++) : 96000.;
   double          const orate = n? --n, atof(*arg++) : 44100.;
   unsigned        const chans = n? --n, (unsigned)atoi(*arg++) : 1;
@@ -94,6 +94,7 @@ int main(int n, char const * arg[])
   }
 
   if (!error) {                         /* If all is well, run the resampler: */
+    engine = soxr_engine(soxr);
     USE_STD_STDIO;
                                                        /* Resample in blocks: */
     do odone = soxr_output(soxr, obuf, olen);
@@ -106,8 +107,8 @@ int main(int n, char const * arg[])
   soxr_delete(soxr);
   free(obuf), free(ibuf);
                                                               /* Diagnostics: */
-  fprintf(stderr, "%-26s %s; %lu clips; I/O: %s\n",
+  fprintf(stderr, "%-26s %s; %lu clips; I/O: %s (%s)\n",
       arg0, soxr_strerror(error), (long unsigned)clips,
-      ferror(stdin) || ferror(stdout)? strerror(errno) : "no error");
+      ferror(stdin) || ferror(stdout)? strerror(errno) : "no error", engine);
   return !!error;
 }
