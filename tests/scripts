@@ -6,8 +6,9 @@ set -e
 
 ../../tests/bandwidth-test
 ../../tests/eg-test
-../../tests/io-test
+../../tests/io-test 3
 ../../tests/large-ratio-test
 ../../tests/phase-test
 ../../tests/q-test
-../../tests/time-test
+../../tests/time-test 1
+../../tests/time-test 2

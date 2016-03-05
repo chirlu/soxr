@@ -31,7 +31,7 @@ do_one() {
   n=`expr $n + 1`
 }
 
-j=3; test z$1 != z && j=$1
+test z$1 != z && j=$1 || j=1
 
 for c in `seq 1 $j`; do
   for n in `seq 0 3`; do
