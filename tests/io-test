@@ -23,7 +23,7 @@ zs=(180 180 180 180 180 120 120 120 120)
 do_one() {
   it=${types[$1]}; ot=${types[`expr $2 % 4 || true`]}
   $tool $ir $or $c $1 $2 $3 < $c.$it > a.$ot
-  sox -r $or -c $c a.$ot -n spectrogram -X50 -hw$w -z${zs[$n]} -o io$c$n$w.png -c "io-test i:$it o:$ot ($2) q:$3"
+  sox -r $or -c $c a.$ot -n spectrogram -X50 -hw$w -z${zs[$n]} -o io$c$n-$w.png -c "io-test i:$it o:$ot ($2) q:$3"
   ./4-split-channels $ir $or $c $1 $2 $3 < $c.$it > b.$ot
   [ $2 != 3 ] && cmp a.$ot b.$ot ||
     test $(sox -mv-1 -r$or -c$c a.$ot -r$or -c$c b.$ot -n stats 2>&1 |grep Pk\ l|tr ' ' '\n'|grep '[0-9]'|uniq) = -84.29

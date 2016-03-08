@@ -8,9 +8,8 @@ set -e
 
 tool=./3-options-input-fn
 ext=f32; e=0
-test z$1 != z && c=$1 || c=2
-qs="`seq 0 7`"
-qv="4 20"
+test z"$1" != z && c="$1" || c=2
+test z"$2" != z && qs="$2" || qs="`seq 0 7` v"
 rates="48000 77773 96000"
 time=`which time`
 BASE=`basename $0`
@@ -23,9 +22,9 @@ for rate0 in $rates; do
 	rate2=$rate0
 	for n in 1 2; do
 		sox -R -r $rate1 -n -c $c 0.$ext synth $len noise; sync
-		for q in $qs "$qv"; do
-			$time -f %e -o $TIME $tool $rate1 $rate2 $c $e $e $q < 0.$ext > /dev/null 2> $ERR
-			[ "$q" == "4 20" ] && q=v
+		for q in $qs; do
+			test $q = v && Q="4 20" || Q=$q
+			$time -f %e -o $TIME $tool $rate1 $rate2 $c $e $e $Q < 0.$ext > /dev/null 2> $ERR
 			echo $rate1 '-->' $rate2 c=$c q=$q t=`cat $TIME` `cat $ERR | sed 's/.*(/(/'`
 		done
 		rate1=$rate0
