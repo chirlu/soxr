@@ -7,7 +7,7 @@
 #cmakedefine01 HAVE_SINGLE_PRECISION
 #cmakedefine01 HAVE_DOUBLE_PRECISION
 #cmakedefine01 HAVE_AVFFT
-#cmakedefine01 HAVE_AVCODEC
+#cmakedefine01 HAVE_AVUTIL
 #cmakedefine01 HAVE_SIMD
 #cmakedefine01 HAVE_FENV_H
 #cmakedefine01 HAVE_LRINT

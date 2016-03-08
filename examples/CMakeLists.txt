@@ -19,7 +19,7 @@ if (NOT BUILD_SHARED_LIBS AND OPENMP_FOUND)
 endif ()
 set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${PROJECT_C_FLAGS}")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${PROJECT_CXX_FLAGS}")
-link_libraries (${PROJECT_NAME})
+link_libraries (${PROJECT_NAME} ${LIBM_LIBRARIES})
 
 foreach (fe ${SOURCES} ${LSR_SOURCES})
   get_filename_component (f ${fe} NAME_WE)

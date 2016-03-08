@@ -10,6 +10,10 @@
 #include "data-io.h"
 #include "internal.h"
 
+#if HAVE_AVUTIL
+#include <libavutil/cpu.h>
+#endif
+
 
 
 char const * soxr_version(void)
@@ -72,6 +76,8 @@ struct soxr {
 /* TODO: these should not be here. */
 #define TO_3dB(a)       ((1.6e-6*a-7.5e-4)*a+.646)
 #define LOW_Q_BW0       (1385 / 2048.) /* 0.67625 rounded to be a FP exact. */
+
+
 
 soxr_quality_spec_t soxr_quality_spec(unsigned long recipe, unsigned long flags)
 {
@@ -190,10 +196,22 @@ static bool cpu_has_simd(void)
     mov     d, edx
   }
   return !!(d & 0x06000000);
+#elif defined AV_CPU_FLAG_NEON
+  return !!(av_get_cpu_flags() & AV_CPU_FLAG_NEON);
 #endif
   return false;
 }
+
+
+
+static bool should_use_simd(void)
+{
+    char const * e = getenv("SOXR_USE_SIMD");
+    return e? !!atoi(e) : cpu_has_simd();
+}
 #endif
+
+
 
 extern control_block_t _soxr_rate32s_cb, _soxr_rate32_cb, _soxr_rate64_cb, _soxr_vr32_cb;
 
@@ -248,7 +266,7 @@ soxr_t soxr_create(
       memcpy(&p->control_block,
           (p->q_spec.flags & SOXR_VR)? &_soxr_vr32_cb :
 #if HAVE_SIMD
-          cpu_has_simd()? &_soxr_rate32s_cb :
+          should_use_simd()? &_soxr_rate32s_cb :
 #endif
           &_soxr_rate32_cb, sizeof(p->control_block));
     }

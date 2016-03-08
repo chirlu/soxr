@@ -27,7 +27,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR})
 
 add_library (tests_lib STATIC util calc_snr)
 
-link_libraries (tests_lib ${PROJECT_NAME}-lsr)
+link_libraries (tests_lib ${PROJECT_NAME}-lsr ${LIBM_LIBRARIES})
 
 enable_testing ()
 

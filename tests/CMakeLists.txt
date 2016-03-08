@@ -2,7 +2,7 @@
 # Licence for this file: LGPL v2.1                  See LICENCE for details.
 
 add_definitions (${PROJECT_C_FLAGS})
-link_libraries (${PROJECT_NAME})
+link_libraries (${PROJECT_NAME} ${LIBM_LIBRARIES})
 
 file (GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.c)
 foreach (fe ${SOURCES})

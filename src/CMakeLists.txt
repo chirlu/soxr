@@ -54,6 +54,7 @@ endif ()
 
 add_library (${PROJECT_NAME} ${LIB_TYPE} ${PROJECT_NAME}.c data-io dbesi0 filter fft4g64
   ${SP_SOURCES} vr32 ${DP_SOURCES} ${SIMD_SOURCES})
+target_link_libraries (${PROJECT_NAME} PRIVATE ${AVCODEC_LIBRARIES} ${AVUTIL_LIBRARIES} ${LIBM_LIBRARIES})
 set_target_properties (${PROJECT_NAME} PROPERTIES
   VERSION "${SO_VERSION}"
   SOVERSION ${SO_VERSION_MAJOR}
@@ -108,18 +109,22 @@ install (TARGETS ${PROJECT_NAME} ${LSR}
 
 # Packaging (for unix-like distributions):
 
-get_property (LIB1 TARGET ${PROJECT_NAME} PROPERTY LOCATION)
-if (BUILD_SHARED_LIBS)
-  set (LIB1 ${LIB1}.${SO_VERSION_MAJOR} ${LIB1}.${SO_VERSION})
-endif ()
-list (APPEND TARGET_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}.h")
-if (WITH_LSR_BINDINGS)
-  get_property (LIB2 TARGET ${LSR} PROPERTY LOCATION)
+if (UNIX)
+  set (LIB1 $<TARGET_FILE:${PROJECT_NAME}>)
   if (BUILD_SHARED_LIBS)
-    set (LIB2 ${LIB2}.${LSR_SO_VERSION_MAJOR} ${LIB2}.${LSR_SO_VERSION})
+    set (LIB1 $<TARGET_SONAME_FILE:${PROJECT_NAME}> ${LIB1})
   endif ()
-  list (APPEND TARGET_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/${LSR}.h")
+  list (APPEND TARGET_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}.h")
+  if (WITH_LSR_BINDINGS)
+    set (LIB2 $<TARGET_FILE:${LSR}>)
+    if (BUILD_SHARED_LIBS)
+      set (LIB2 $<TARGET_SONAME_FILE:${LSR}> ${LIB2})
+    endif ()
+    list (APPEND TARGET_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/${LSR}.h")
+  endif ()
+  set (TARGET_LIBS ${LIB1} ${LIB2})
+  file (GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/libsoxr.src CONTENT
+    "set(TARGET_LIBS \"${TARGET_LIBS}\")\n")
+  file (GENERATE OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/libsoxr-dev.src CONTENT
+    "set(TARGET_HEADERS \"${TARGET_HEADERS}\")\nset(TARGET_PCS \"${TARGET_PCS}\")\n")
 endif ()
-set (TARGET_LIBS ${LIB1} ${LIB2})
-configure_file (${CMAKE_CURRENT_SOURCE_DIR}/libsoxr.src.in ${CMAKE_CURRENT_BINARY_DIR}/libsoxr.src)
-configure_file (${CMAKE_CURRENT_SOURCE_DIR}/libsoxr-dev.src.in ${CMAKE_CURRENT_BINARY_DIR}/libsoxr-dev.src)

@@ -10,7 +10,7 @@
 #define HAVE_SINGLE_PRECISION 1
 #define HAVE_DOUBLE_PRECISION 1
 #define HAVE_AVFFT 0
-#define HAVE_AVCODEC 0
+#define HAVE_AVUTIL 0
 #define HAVE_SIMD 1
 #define HAVE_FENV_H 0
 #define HAVE_LRINT 0

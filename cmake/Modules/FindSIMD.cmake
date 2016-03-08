@@ -40,35 +40,44 @@
 include (CheckCSourceCompiles)
 include (FindPackageHandleStandardArgs)
 
-if (WIN32) # Safety for when mixed lib/app compilers (but performance hit)
-  set (GCC_WIN32_SIMD_OPTS "-mincoming-stack-boundary=2")
+if (CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
+  set (SIMD_C_FLAG_CANDIDATES
+    # Gcc
+    "-Wno-cast-align -mfpu=neon-vfpv4 -mcpu=cortex-a7"
+    "-Wno-cast-align -mfpu=neon       -mfloat-abi=hard"
+    "-Wno-cast-align -mfpu=neon       -mfloat-abi=softfp"
+    "-Wno-cast-align -mfpu=neon       -mfloat-abi=soft"
+  )
+  set (SIMD_C_TEST_SOURCE "
+    #include <arm_neon.h>
+    int main() {
+      float32x4_t a = vdupq_n_f32(0), b = a, c = vaddq_f32(a,b);
+      return 0;
+    }
+    ")
+else ()
+  if (WIN32) # Safety for when mixed lib/app compilers (but performance hit)
+    set (GCC_WIN32_SIMD_OPTS "-mincoming-stack-boundary=2")
+  endif ()
+
+  set (SIMD_C_FLAG_CANDIDATES
+    # x64
+    " "
+    # Microsoft Visual Studio x86
+    "/arch:SSE /fp:fast -D__SSE__"
+    # Gcc x86
+    "-msse -mfpmath=sse ${GCC_WIN32_SIMD_OPTS}"
+    # Gcc x86 (old versions)
+    "-msse -mfpmath=sse"
+  )
+  set (SIMD_C_TEST_SOURCE "
+    #include <xmmintrin.h>
+    int main() {
+      __m128 a = _mm_setzero_ps(), b = a, c = _mm_add_ps(a,b);
+      return 0;
+    }
+    ")
 endif ()
-
-set (SIMD_C_FLAG_CANDIDATES
-  # x64
-  " "
-  # Microsoft Visual Studio x86
-  "/arch:SSE /fp:fast -D__SSE__"
-  # Gcc x86
-  "-msse -mfpmath=sse ${GCC_WIN32_SIMD_OPTS}"
-  # Gcc x86 (old versions)
-  "-msse -mfpmath=sse"
-)
-
-set (SIMD_C_TEST_SOURCE
-"
-#include <xmmintrin.h>
-int main()
-{
-  __m128 a, b;
-  float vals[4] = {0};
-  a = _mm_loadu_ps (vals);
-  b = a;
-  b = _mm_add_ps (a,b);
-  _mm_storeu_ps (vals,b);
-  return 0;
-}
-")
 
 if (DEFINED SIMD_C_FLAGS)
   set (SIMD_C_FLAG_CANDIDATES)

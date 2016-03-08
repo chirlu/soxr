@@ -1,4 +1,4 @@
-SoX Resampler Library       Copyright (c) 2007-13 robs@users.sourceforge.net
+SoX Resampler Library       Copyright (c) 2007-16 robs@users.sourceforge.net
 
 INSTALLATION GUIDE CONTENTS
 
@@ -6,6 +6,7 @@ INSTALLATION GUIDE CONTENTS
 * Build customisation
 * Cross-compiling with mingw (linux host)
 * Integration with other build systems
+* SIMD
 
 
 
@@ -42,7 +43,7 @@ STANDARD BUILD
 
         nmake install               (on MS-Windows)
     or
-        cd Release; make install    (on unix)
+        cd Release; make install    (on unix-like)
 
 
 4. Configuration:
@@ -121,3 +122,19 @@ Autotools-based systems might find it useful to create a file called
 (or with other build options as required).
 
 For MS visual studio, see msvc/README
+
+
+
+SIMD
+
+A single build of the library can support both SIMD and non-SIMD variants of a
+particular CPU, via a run-time selection of which instruction-set to use.  The
+SOXR_USE_SIMD boolean environment provides manual selection; otherwise,
+selection is automatic for x86 CPUs, and can be automatic for ARM CPUs if the
+3rd-party library `libavutil' is available when libsoxr is built.
+
+Example #3 can be used to determine the result of the selection on a particular
+system.  E.g. (on unix-like):
+
+    $ ./3-options-input-fn < /dev/null
+    ./3-options-input-fn       no error; 0 clips; I/O: no error (single-precision-SIMD)

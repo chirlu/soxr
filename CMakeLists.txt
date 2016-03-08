@@ -1,7 +1,7 @@
-# SoX Resampler Library       Copyright (c) 2007-13 robs@users.sourceforge.net
+# SoX Resampler Library       Copyright (c) 2007-16 robs@users.sourceforge.net
 # Licence for this file: LGPL v2.1                  See LICENCE for details.
 
-cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.0 FATAL_ERROR)
 
 project (soxr C)
 set (DESCRIPTION_SUMMARY "High quality, one-dimensional sample-rate conversion library")
@@ -70,7 +70,7 @@ include (TestBigEndian)
 check_library_exists (m pow "" NEED_LIBM)
 if (NEED_LIBM)
   set (CMAKE_REQUIRED_LIBRARIES "m;${CMAKE_REQUIRED_LIBRARIES}")
-  link_libraries (m)
+  set (LIBM_LIBRARIES m)
 endif ()
 
 if (WITH_OPENMP)
@@ -97,13 +97,19 @@ if (WITH_DOUBLE_PRECISION)
   set (HAVE_DOUBLE_PRECISION 1)
 endif ()
 
-if (WITH_AVFFT OR HAVE_SIMD)
+if (WITH_AVFFT)
   find_package (LibAVCodec)
   if (AVCODEC_FOUND)
     include_directories (${AVCODEC_INCLUDE_DIRS})
-    link_libraries (${AVCODEC_LIBRARIES})
-    set (HAVE_AVFFT ${WITH_AVFFT})
-    set (HAVE_AVCODEC 1)
+    set (HAVE_AVFFT 1)
+  endif ()
+endif ()
+
+if (CMAKE_SYSTEM_PROCESSOR MATCHES "^arm" AND HAVE_SIMD)
+  find_package (LibAVUtil)
+  if (AVUTIL_FOUND)
+    include_directories (${AVUTIL_INCLUDE_DIRS})
+    set (HAVE_AVUTIL 1)
   endif ()
 endif ()
 
@@ -117,7 +123,7 @@ test_big_endian (WORDS_BIGENDIAN)
 
 if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
   set (PROJECT_CXX_FLAGS "-Wconversion -Wall -W -pedantic -Wundef -Wcast-align -Wpointer-arith -Wno-long-long")
-  set (PROJECT_C_FLAGS "${PROJECT_CXX_FLAGS} -Wnested-externs -Wmissing-prototypes -Wstrict-prototypes")
+  set (PROJECT_C_FLAGS "${PROJECT_CXX_FLAGS} -std=gnu89 -Wnested-externs -Wmissing-prototypes -Wstrict-prototypes")
   if (CMAKE_BUILD_TYPE STREQUAL "Release")
     set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -s") # strip
   endif ()
