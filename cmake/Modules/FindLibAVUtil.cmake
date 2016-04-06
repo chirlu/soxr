@@ -10,7 +10,7 @@
 
 if (AVUTIL_INCLUDES)
   set (AVUTIL_FIND_QUIETLY TRUE)
-endif (AVUTIL_INCLUDES)
+endif ()
 
 find_path (AVUTIL_INCLUDES libavutil/cpu.h)
 

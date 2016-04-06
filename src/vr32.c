@@ -197,7 +197,7 @@ static float poly_fir1_u(float const * input, uint32_t frac)
 typedef struct {
   union {
     int64_t all;
-#if WORDS_BIGENDIAN
+#if HAVE_BIGENDIAN
     struct {int32_t integer; uint32_t frac;} part;
 #else
     struct {uint32_t frac; int32_t integer;} part;

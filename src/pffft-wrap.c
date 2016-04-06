@@ -10,6 +10,9 @@
 #define pffft_aligned_malloc  _soxr_simd_aligned_malloc
 #define pffft_aligned_calloc  _soxr_simd_aligned_calloc
 
+#undef inline
+#define inline __inline
+
 #if defined _MSC_VER
   #define sin (float)sin
   #define cos (float)cos

@@ -4,7 +4,7 @@ INSTALLATION GUIDE CONTENTS
 
 * Standard build
 * Build customisation
-* Cross-compiling with mingw (linux host)
+* Cross-compilation
 * Integration with other build systems
 * SIMD
 
@@ -82,17 +82,29 @@ Options, if given, should be preceded with '-D', e.g.
 
 
 
-CROSS-COMPILING WITH MINGW (LINUX HOST)
+CROSS-COMPILATION
 
-For example:
+E.g. targeting a Linux ARM system:
+
+    mkdir build
+    cd build
+    cmake -DCMAKE_SYSTEM_NAME=Linux \
+          -DCMAKE_C_COMPILER=arm-linux-gnueabi-gcc-5 \
+          ..
+or, also building the examples (one of which uses C++):
+
+    cmake -DCMAKE_SYSTEM_NAME=Linux \
+          -DCMAKE_C_COMPILER=arm-linux-gnueabi-gcc-5 \
+          -DCMAKE_CXX_COMPILER=arm-linux-gnueabi-g++-5 \
+          -DBUILD_EXAMPLES=1 \
+          ..
+
+E.g. with Mingw (Linux host), using a tool-chain file:
 
     mkdir build
     cd build
     cmake -DCMAKE_TOOLCHAIN_FILE=~/Toolchain-x86_64-mingw-w64-mingw32.cmake \
           -DCMAKE_INSTALL_PREFIX=install \
-          -DHAVE_WORDS_BIGENDIAN_EXITCODE=1 \
-          -DBUILD_TESTS=0 \
-          -DBUILD_EXAMPLES=1 \
           ..
     make
 
@@ -128,7 +140,7 @@ For MS visual studio, see msvc/README
 SIMD
 
 A single build of the library can support both SIMD and non-SIMD variants of a
-particular CPU, via a run-time selection of which instruction-set to use.  The
+particular CPU via run-time selection of which instruction-set to use.  The
 SOXR_USE_SIMD boolean environment provides manual selection; otherwise,
 selection is automatic for x86 CPUs, and can be automatic for ARM CPUs if the
 3rd-party library `libavutil' is available when libsoxr is built.

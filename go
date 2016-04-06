@@ -1,4 +1,6 @@
 #!/bin/sh
+set -e
+
 # SoX Resampler Library       Copyright (c) 2007-13 robs@users.sourceforge.net
 # Licence for this file: LGPL v2.1                  See LICENCE for details.
 
@@ -12,6 +14,6 @@ rm -f CMakeCache.txt             # Prevent interference from any in-tree build
 mkdir -p $build
 cd $build
 
-cmake -DCMAKE_BUILD_TYPE=$build -Wno-dev .. &&
-  make $j &&
-    (ctest $j || echo "FAILURE details in $build/Testing/Temporary/LastTest.log")
+cmake -DCMAKE_BUILD_TYPE=$build -Wno-dev ..
+make $j
+ctest $j || echo "FAILURE details in $build/Testing/Temporary/LastTest.log"

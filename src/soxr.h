@@ -258,7 +258,7 @@ struct soxr_quality_spec {                                       /* Typically */
 
 struct soxr_runtime_spec {                                       /* Typically */
   unsigned log2_min_dft_size;/* For DFT efficiency. [8,15]              10    */
-  unsigned log2_large_dft_size;/* For DFT efficiency. [16,20]           17    */
+  unsigned log2_large_dft_size;/* For DFT efficiency. [8,20]            17    */
   unsigned coef_size_kbytes; /* For SOXR_COEF_INTERP_AUTO (below).      400   */
   unsigned num_threads;      /* If built so. 0 means `automatic'.        1    */
   void * e;                  /* Reserved for internal use.               0    */

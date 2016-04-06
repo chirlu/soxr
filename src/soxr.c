@@ -2,7 +2,9 @@
  * Licence for this file: LGPL v2.1                  See LICENCE for details. */
 
 #include <math.h>
+#include <stdarg.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <time.h>
 
@@ -10,8 +12,31 @@
 #include "data-io.h"
 #include "internal.h"
 
-#if HAVE_AVUTIL
+#if AVUTIL_FOUND
 #include <libavutil/cpu.h>
+#endif
+
+
+
+#if WITH_DEV_TRACE
+
+int _soxr_trace_level(void)
+{
+  char const * e = getenv("SOXR_TRACE");
+  return e? atoi(e) : 4;
+}
+
+
+
+void _soxr_trace(char const * fmt, ...)
+{
+  va_list args;
+  va_start(args, fmt);
+  vfprintf(stderr, fmt, args);
+  fputc('\n', stderr);
+  va_end(args);
+}
+
 #endif
 
 
@@ -169,7 +194,7 @@ soxr_io_spec_t soxr_io_spec(
 
 
 
-#if HAVE_SIMD
+#if SIMD_FOUND
 static bool cpu_has_simd(void)
 {
 #if defined __x86_64__ || defined _M_X64
@@ -217,6 +242,31 @@ extern control_block_t _soxr_rate32s_cb, _soxr_rate32_cb, _soxr_rate64_cb, _soxr
 
 
 
+static void runtime_num(char const * env_name, int min, int max, unsigned * field)
+{
+  char const * e = getenv(env_name);
+  if (e) {
+    int i = atoi(e);
+    if (i >= min && i <= max)
+      *field = (unsigned)i;
+  }
+}
+
+
+
+static void runtime_flag(char const * env_name, unsigned n_bits, unsigned n_shift, unsigned long * flags)
+{
+  char const * e = getenv(env_name);
+  if (e) {
+    int i = atoi(e);
+    unsigned long mask = (1UL << n_bits) - 1;
+    if (i >= 0 && i <= (int)mask)
+      *flags &= ~(mask << n_shift), *flags |= ((unsigned long)i << n_shift);
+  }
+}
+
+
+
 soxr_t soxr_create(
   double input_rate, double output_rate,
   unsigned num_channels,
@@ -254,27 +304,38 @@ soxr_t soxr_create(
       p->io_spec.scale = 1;
 
     p->runtime_spec = runtime_spec? *runtime_spec : soxr_runtime_spec(1);
+
+    runtime_num("SOXR_MIN_DFT_SIZE", 8, 15, &p->runtime_spec.log2_min_dft_size);
+    runtime_num("SOXR_LARGE_DFT_SIZE", 8, 20, &p->runtime_spec.log2_large_dft_size);
+    runtime_num("SOXR_COEFS_SIZE", 100, 800, &p->runtime_spec.coef_size_kbytes);
+    runtime_num("SOXR_NUM_THREADS", 0, 64, &p->runtime_spec.num_threads);
+    runtime_flag("SOXR_COEF_INTERP", 2, 0, &p->runtime_spec.flags);
+
+    runtime_flag("SOXR_STRICT_BUF", 1, 2, &p->runtime_spec.flags);
+    runtime_flag("SOXR_NOSMALLINTOPT", 1, 3, &p->runtime_spec.flags);
+
     p->io_spec.scale *= datatype_full_scale[p->io_spec.otype & 3] /
                         datatype_full_scale[p->io_spec.itype & 3];
+
     p->seed = (unsigned long)time(0) ^ (unsigned long)(size_t)p;
 
-#if HAVE_SINGLE_PRECISION
-    if (!HAVE_DOUBLE_PRECISION || (p->q_spec.precision <= 20 && !(p->q_spec.flags & SOXR_DOUBLE_PRECISION))
+#if WITH_SINGLE_PRECISION
+    if (!WITH_DOUBLE_PRECISION || (p->q_spec.precision <= 20 && !(p->q_spec.flags & SOXR_DOUBLE_PRECISION))
         || (p->q_spec.flags & SOXR_VR)) {
       p->deinterleave = (deinterleave_t)_soxr_deinterleave_f;
       p->interleave = (interleave_t)_soxr_interleave_f;
       memcpy(&p->control_block,
           (p->q_spec.flags & SOXR_VR)? &_soxr_vr32_cb :
-#if HAVE_SIMD
+#if SIMD_FOUND
           should_use_simd()? &_soxr_rate32s_cb :
 #endif
           &_soxr_rate32_cb, sizeof(p->control_block));
     }
-#if HAVE_DOUBLE_PRECISION
+#if WITH_DOUBLE_PRECISION
     else
 #endif
 #endif
-#if HAVE_DOUBLE_PRECISION
+#if WITH_DOUBLE_PRECISION
     {
       p->deinterleave = (deinterleave_t)_soxr_deinterleave;
       p->interleave = (interleave_t)_soxr_interleave;

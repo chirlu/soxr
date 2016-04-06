@@ -42,4 +42,5 @@
 #define min(x,y) ((x)<(y)?(x):(y))
 #define max(x,y) ((x)>(y)?(x):(y))
 
+#undef AL
 #define AL(a) (sizeof(a)/sizeof((a)[0]))  /* Array Length */

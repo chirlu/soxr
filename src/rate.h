@@ -69,7 +69,7 @@ extern fn_t RDFT_CB[11];
 #include "fifo.h"
 
 typedef union { /* Int64 in parts */
-  #if WORDS_BIGENDIAN
+  #if HAVE_BIGENDIAN
   struct {int32_t ms; uint32_t ls;} parts;
   #else
   struct {uint32_t ls; int32_t ms;} parts;
@@ -78,7 +78,7 @@ typedef union { /* Int64 in parts */
 } int64p_t;
 
 typedef union { /* Uint64 in parts */
-  #if WORDS_BIGENDIAN
+  #if HAVE_BIGENDIAN
   struct {uint32_t ms, ls;} parts;
   #else
   struct {uint32_t ls, ms;} parts;
@@ -695,7 +695,7 @@ static char const * rate_create(
       q_spec->phase_response,
       q_spec->passband_end,
       q_spec->stopband_begin,
-      "\1\2\0"[q_spec->flags & 3],
+      (rolloff_t)"\1\2\0"[q_spec->flags & 3],
       !!(q_spec->flags & SOXR_MAINTAIN_3DB_PT),
       scale,
       !!(q_spec->flags & SOXR_HI_PREC_CLOCK),

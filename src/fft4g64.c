@@ -5,7 +5,7 @@
 #include "fft4g.c"
 #include "soxr-config.h"
 
-#if HAVE_DOUBLE_PRECISION
+#if WITH_DOUBLE_PRECISION
 static void * null(void) {return 0;}
 static void nothing(void) {}
 static void forward (int length, void * setup, double * H) {lsx_safe_rdft(length,  1, H); (void)setup;}

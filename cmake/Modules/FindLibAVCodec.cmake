@@ -10,7 +10,7 @@
 
 if (AVCODEC_INCLUDES)
   set (AVCODEC_FIND_QUIETLY TRUE)
-endif (AVCODEC_INCLUDES)
+endif ()
 
 find_path (AVCODEC_INCLUDES libavcodec/avcodec.h)
 

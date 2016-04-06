@@ -66,7 +66,7 @@ else ()
     # Microsoft Visual Studio x86
     "/arch:SSE /fp:fast -D__SSE__"
     # Gcc x86
-    "-msse -mfpmath=sse ${GCC_WIN32_SIMD_OPTS}"
+    "-Wno-cast-align -msse -mfpmath=sse ${GCC_WIN32_SIMD_OPTS}"
     # Gcc x86 (old versions)
     "-msse -mfpmath=sse"
   )

@@ -14,7 +14,7 @@
 #include "fft4g.h"
 #include "ccrw2.h"
 
-#if 1 || HAVE_DOUBLE_PRECISION /* Always need this, for lsx_fir_to_phase. */
+#if 1 || WITH_DOUBLE_PRECISION /* Always need this, for lsx_fir_to_phase. */
 #define DFT_FLOAT double
 #define DONE_WITH_FFT_CACHE done_with_fft_cache
 #define FFT_CACHE_CCRW fft_cache_ccrw
@@ -31,7 +31,7 @@
 #include "fft4g_cache.h"
 #endif
 
-#if HAVE_SINGLE_PRECISION && !HAVE_AVFFT
+#if WITH_SINGLE_PRECISION && !AVCODEC_FOUND
 #define DFT_FLOAT float
 #define DONE_WITH_FFT_CACHE done_with_fft_cache_f
 #define FFT_CACHE_CCRW fft_cache_ccrw_f
@@ -48,14 +48,14 @@
 #include "fft4g_cache.h"
 #endif
 
-#if HAVE_DOUBLE_PRECISION || !SOXR_LIB
+#if WITH_DOUBLE_PRECISION || !SOXR_LIB
 #define DFT_FLOAT double
 #define ORDERED_CONVOLVE lsx_ordered_convolve
 #define ORDERED_PARTIAL_CONVOLVE lsx_ordered_partial_convolve
 #include "rdft.h"
 #endif
 
-#if HAVE_SINGLE_PRECISION
+#if WITH_SINGLE_PRECISION
 #define DFT_FLOAT float
 #define ORDERED_CONVOLVE lsx_ordered_convolve_f
 #define ORDERED_PARTIAL_CONVOLVE lsx_ordered_partial_convolve_f

@@ -34,7 +34,11 @@ if (NOT CMAKE_BUILD_TYPE)
   set (CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif ()
 
-option (BUILD_TESTS "Build sanity-tests."  ON)
+if (NOT CMAKE_CROSSCOMPILING)
+  option (BUILD_TESTS "Build sanity-tests."  ON)
+else ()
+  set (BUILD_TESTS OFF)
+endif ()
 option (BUILD_SHARED_LIBS "Build shared libraries." ON)
 option (BUILD_EXAMPLES "Build examples." OFF)
 option (WITH_OPENMP "Include OpenMP threading." ON)
@@ -49,12 +53,13 @@ cmake_dependent_option (WITH_AVFFT "Use libavcodec (LGPL) for SIMD DFT." OFF
   "WITH_SIMD;NOT WITH_PFFFT" OFF)
 cmake_dependent_option (WITH_PFFFT "Use PFFFT (BSD-like licence) for SIMD DFT." ON
   "WITH_SIMD;NOT WITH_AVFFT" OFF)
-if (UNIX)
-  if (EXISTS ${PROJECT_SOURCE_DIR}/lsr-tests)
-    cmake_dependent_option (BUILD_LSR_TESTS "Build LSR tests." OFF
-      "WITH_LSR_BINDINGS" OFF)
-  endif ()
+if (UNIX AND NOT CMAKE_CROSSCOMPILING AND EXISTS ${PROJECT_SOURCE_DIR}/lsr-tests)
+  cmake_dependent_option (BUILD_LSR_TESTS "Build LSR tests." OFF
+    "WITH_LSR_BINDINGS" OFF)
+else ()
+  set (BUILD_LSR_TESTS OFF)
 endif ()
+option (WITH_DEV_TRACE "Enable developer trace output." OFF)
 
 
 
@@ -65,7 +70,10 @@ list (APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/Modules)
 include (CheckFunctionExists)
 include (CheckIncludeFiles)
 include (CheckLibraryExists)
+include (SetSystemProcessor)
 include (TestBigEndian)
+
+set_system_processor ()
 
 check_library_exists (m pow "" NEED_LIBM)
 if (NEED_LIBM)
@@ -84,44 +92,35 @@ endif ()
 
 if (WITH_SIMD)
   find_package (SIMD)
-  if (SIMD_FOUND)
-    set (HAVE_SIMD 1)
-  endif ()
-endif ()
-
-if (WITH_SINGLE_PRECISION)
-  set (HAVE_SINGLE_PRECISION 1)
-endif ()
-
-if (WITH_DOUBLE_PRECISION)
-  set (HAVE_DOUBLE_PRECISION 1)
 endif ()
 
 if (WITH_AVFFT)
-  find_package (LibAVCodec)
+  find_package (LibAVCodec REQUIRED)
   if (AVCODEC_FOUND)
     include_directories (${AVCODEC_INCLUDE_DIRS})
-    set (HAVE_AVFFT 1)
+    set (LIBS ${LIBS} ${AVCODEC_LIBRARIES})
   endif ()
 endif ()
 
-if (CMAKE_SYSTEM_PROCESSOR MATCHES "^arm" AND HAVE_SIMD)
+if (CMAKE_SYSTEM_PROCESSOR MATCHES "^arm" AND SIMD_FOUND)
   find_package (LibAVUtil)
   if (AVUTIL_FOUND)
     include_directories (${AVUTIL_INCLUDE_DIRS})
-    set (HAVE_AVUTIL 1)
+    set (LIBS ${LIBS} ${AVUTIL_LIBRARIES})
   endif ()
 endif ()
 
 check_function_exists (lrint HAVE_LRINT)
 check_include_files (fenv.h HAVE_FENV_H)
-test_big_endian (WORDS_BIGENDIAN)
+check_include_files (stdbool.h HAVE_STDBOOL_H)
+check_include_files (stdint.h HAVE_STDINT_H)
+test_big_endian (HAVE_BIGENDIAN)
 
 
 
 # Compiler configuration:
 
-if (CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
+if (CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
   set (PROJECT_CXX_FLAGS "-Wconversion -Wall -W -pedantic -Wundef -Wcast-align -Wpointer-arith -Wno-long-long")
   set (PROJECT_C_FLAGS "${PROJECT_CXX_FLAGS} -std=gnu89 -Wnested-externs -Wmissing-prototypes -Wstrict-prototypes")
   if (CMAKE_BUILD_TYPE STREQUAL "Release")
@@ -255,10 +254,8 @@ if (UNIX)
       soxr-config.h
       src/CMakeFiles
       src/cmake_install.cmake
-      src/libsoxr-dev.src
       src/libsoxr-lsr.pc
       src/libsoxr.pc
-      src/libsoxr.src
       src/Makefile)
 endif ()
 

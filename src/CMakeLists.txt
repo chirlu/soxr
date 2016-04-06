@@ -23,13 +23,13 @@ add_definitions (${PROJECT_C_FLAGS} -DSOXR_LIB)
 # Libsoxr configuration:
 
 set (RDFT32 fft4g32)
-if (WITH_AVFFT AND AVCODEC_FOUND)
+if (AVCODEC_FOUND)
   set (RDFT32 avfft32)
   set (RDFT32S avfft32s)
 elseif (WITH_PFFFT)
   #set (RDFT32 pffft32)
   set (RDFT32S pffft32s)
-elseif (WITH_SIMD)
+elseif (SIMD_FOUND)
   set (RDFT32S fft4g32s)
 endif ()
 
@@ -41,7 +41,7 @@ if (WITH_SINGLE_PRECISION)
   set (SP_SOURCES rate32 ${RDFT32})
 endif ()
 
-if (HAVE_SIMD)
+if (SIMD_FOUND)
   set (SIMD_SOURCES rate32s ${RDFT32S} simd)
   foreach (source ${SIMD_SOURCES})
     set_property (SOURCE ${source} PROPERTY COMPILE_FLAGS ${SIMD_C_FLAGS})
@@ -54,7 +54,7 @@ endif ()
 
 add_library (${PROJECT_NAME} ${LIB_TYPE} ${PROJECT_NAME}.c data-io dbesi0 filter fft4g64
   ${SP_SOURCES} vr32 ${DP_SOURCES} ${SIMD_SOURCES})
-target_link_libraries (${PROJECT_NAME} PRIVATE ${AVCODEC_LIBRARIES} ${AVUTIL_LIBRARIES} ${LIBM_LIBRARIES})
+target_link_libraries (${PROJECT_NAME} PRIVATE ${LIBS} ${LIBM_LIBRARIES})
 set_target_properties (${PROJECT_NAME} PROPERTIES
   VERSION "${SO_VERSION}"
   SOVERSION ${SO_VERSION_MAJOR}

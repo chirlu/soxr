@@ -4,7 +4,7 @@
 #if !defined soxr_rint_included
 #define soxr_rint_included
 
-#include "soxr-config.h"
+#include "std-types.h"
 
 
 
