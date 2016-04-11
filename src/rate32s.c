@@ -5,5 +5,5 @@
 #define RATE_SIMD  1
 #define RDFT_CB    _soxr_rdft32s_cb
 #define RATE_CB    _soxr_rate32s_cb
-#define RATE_ID    "single-precision-SIMD"
+#define RATE_ID    "cr32s"
 #include "rate.h"

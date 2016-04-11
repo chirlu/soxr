@@ -639,7 +639,7 @@ static char const * vr_create(void * channel, void * shared,double max_io_ratio,
 
 static char const * vr_id(void)
 {
-  return "single-precision variable-rate";
+  return "vr32";
 }
 
 typedef void (* fn_t)(void);
