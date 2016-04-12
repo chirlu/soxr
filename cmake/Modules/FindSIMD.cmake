@@ -62,6 +62,7 @@ else ()
 
   set (SIMD_C_FLAG_CANDIDATES
     # x64
+    "-Wno-cast-align"
     " "
     # Microsoft Visual Studio x86
     "/arch:SSE /fp:fast -D__SSE__"

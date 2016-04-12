@@ -16,6 +16,7 @@ BASE=`basename $0`
 TIME=/tmp/$BASE-time-$$
 ERR=/tmp/$BASE-err-$$
 uname -m |grep -q ^arm && len=60 || len=600
+export OMP_NUM_THREADS=2
 
 for rate0 in $rates; do
 	rate1=44100

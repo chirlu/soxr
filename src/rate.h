@@ -416,7 +416,7 @@ static char const * rate_init(
   assert(passband_end + .005 < stopband_begin);
 
   p->factor = factor;
-  if (bits) while (!n++) {                               /* Determine stages: */
+  if (bits!=0) while (!n++) {                            /* Determine stages: */
     int try, L, M, x, maxL = interpolator > 0? 1 : mode? 2048 :
       (int)ceil((double)max_coefs_size * 1000. / (U100_l * sizeof(sample_t)));
     double d, epsilon = 0, frac;
@@ -425,9 +425,9 @@ static char const * rate_init(
     preM = upsample || (arbM > 1.5 && arbM < 2);
     postM = 1 + (arbM > 1 && preM), arbM /= postM;
     preL = 1 + (!preM && arbM < 2) + (upsample && mode), arbM *= preL;
-    if ((frac = arbM - (int)arbM))
+    if ((frac = arbM - (int)arbM)!=0)
       epsilon = fabs((uint32_t)(frac * MULT32 + .5) / (frac * MULT32) - 1);
-    for (i = 1, rational = !frac; i <= maxL && !rational; ++i) {
+    for (i = 1, rational = frac==0; i <= maxL && !rational; ++i) {
       d = frac * i, try = (int)(d + .5);
       if ((rational = fabs(try / d - 1) <= epsilon)) {    /* No long doubles! */
         if (try == i)
@@ -483,7 +483,7 @@ static char const * rate_init(
         log2_min_dft_size, log2_large_dft_size);
   }
 
-  if (!bits && have_arb_stage) {                  /* `Quick' cubic arb stage: */
+  if (bits==0 && have_arb_stage) {                  /* `Quick' cubic arb stage: */
     arb_stage.type = cubic_stage;
     arb_stage.fn = cubic_stage_fn;
     arb_stage.mult = multiplier, multiplier = 1;
@@ -516,7 +516,7 @@ static char const * rate_init(
         arbM /= arbL, arbL = 1, rational = false;
       phase_bits = (int)ceil(f1->scalar + log(mult)/log(2.));
       phases = !rational? (1 << phase_bits) : arbL;
-      if (!f->interp[0].scalar) {
+      if (f->interp[0].scalar==0) {
         int phases0 = max(phases, 19), n0 = 0;
         lsx_design_lpf(Fp, Fs, -Fn, attArb, &n0, phases0, f->beta);
         num_coefs = n0 / phases0 + 1, num_coefs += num_coefs & !preM;

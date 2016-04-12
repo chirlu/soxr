@@ -1,5 +1,5 @@
 Version 0.1.3 (2016-mm-dd)
-  * Better support for ARM+SIMD and cross-compilation.
+  * Better support for clang, ARM+SIMD, and cross-compilation.
   * Other minor fixes/improvements to build/tests/documentation.
 
 Version 0.1.2 (2015-09-05)

@@ -50,6 +50,8 @@ include (FindPackageHandleStandardArgs)
 set (OpenMP_C_FLAG_CANDIDATES
   #Gnu
   "-fopenmp"
+  #Clang
+  "-fopenmp=libiomp5"
   #Microsoft Visual Studio
   "/openmp"
   #Intel windows

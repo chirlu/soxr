@@ -316,7 +316,7 @@ static void vr_init(rate_t * p, double default_io_ratio, int num_stages, double 
   }
   fifo_create(&p->output_fifo, sizeof(float));
   p->default_io_ratio = default_io_ratio;
-  if (!fade_coefs[0]) {
+  if (fade_coefs[0]==0) {
     for (i = 0; i < iAL(fade_coefs); ++i)
       fade_coefs[i] = (float)(.5 * (1 + cos(M_PI * i / (AL(fade_coefs) - 1))));
     prepare_coefs(poly_fir_coefs_u, POLY_FIR_LEN_U, PHASES0_U, PHASES_U, coefs0_u, mult);
@@ -367,7 +367,7 @@ static void vr_set_io_ratio(rate_t * p, double io_ratio, size_t slew_len)
     }
   }
   else {
-    if (p->default_io_ratio) { /* Then this is the first call to this fn. */
+    if (p->default_io_ratio!=0) { /* Then this is the first call to this fn. */
       int octave = (int)floor(log(io_ratio) / M_LN2);
       p->current.stage_num = octave < 0? -1 : min(octave, p->num_stages0-1);
       enter_new_stage(p, 0);
@@ -375,7 +375,7 @@ static void vr_set_io_ratio(rate_t * p, double io_ratio, size_t slew_len)
     else if (p->fade_len)
       set_step(&p->fadeout, io_ratio);
     set_step(&p->current, io_ratio);
-    if (p->default_io_ratio) FRAC(p->current.at) = FRAC(p->current.step) >> 1;
+    if (p->default_io_ratio!=0) FRAC(p->current.at) = FRAC(p->current.step) >> 1;
     p->default_io_ratio = 0;
   }
 }
@@ -430,7 +430,7 @@ static bool do_input_stage(rate_t * p, int stage_num, int sign, int min_stage_nu
 static int vr_process(rate_t * p, int olen0)
 {
   assert(p->num_stages > 0);
-  if (p->default_io_ratio)
+  if (p->default_io_ratio!=0)
     vr_set_io_ratio(p, p->default_io_ratio, 0);
   {
     float * output = fifo_reserve(&p->output_fifo, olen0);
@@ -462,7 +462,7 @@ static int vr_process(rate_t * p, int olen0)
       olen = min(olen, (int)(AL(buf) >> 1));
       if (p->slew_len)
         olen = min(olen, p->slew_len);
-      else if (p->new_io_ratio) {
+      else if (p->new_io_ratio!=0) {
         set_step(&p->current, p->new_io_ratio);
         set_step(&p->fadeout, p->new_io_ratio);
         p->fadeout.step_step.all = p->current.step_step.all = 0;

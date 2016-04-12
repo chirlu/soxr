@@ -101,7 +101,7 @@ double * lsx_make_lpf(
 
   if (h) for (i = 0; i <= m / 2; ++i) {
     double z = i - .5 * m, x = z * M_PI, y = z * mult1;
-    h[i] = x? sin(Fc * x) / x : Fc;
+    h[i] = x!=0? sin(Fc * x) / x : Fc;
     h[i] *= lsx_bessel_I_0(beta * sqrt(1 - y * y)) * mult;
     if (m - i != i)
       h[m - i] = h[i];
@@ -145,7 +145,7 @@ double * lsx_design_lpf(
 static double safe_log(double x)
 {
   assert(x >= 0);
-  if (x)
+  if (x!=0)
     return log(x);
   lsx_debug("log(0)");
   return -26;
@@ -222,7 +222,7 @@ void lsx_fir_to_phase(double * * h, int * len, int * post_len, double phase)
   while (peak && fabs(work[peak-1]) > fabs(work[peak]) && work[peak-1] * work[peak] > 0)
     --peak;
 
-  if (!phase1)
+  if (phase1==0)
     begin = 0;
   else if (phase1 == 1)
     begin = peak - *len / 2;

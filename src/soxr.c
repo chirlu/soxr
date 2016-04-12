@@ -275,7 +275,7 @@ soxr_t soxr_create(
   soxr_quality_spec_t const * q_spec,
   soxr_runtime_spec_t const * runtime_spec)
 {
-  double io_ratio = output_rate? input_rate? input_rate / output_rate : -1 : input_rate? -1 : 0;
+  double io_ratio = output_rate!=0? input_rate!=0? input_rate / output_rate : -1 : input_rate!=0? -1 : 0;
   static const float datatype_full_scale[] = {1, 1, 65536.*32768, 32768};
   soxr_t p = 0;
   soxr_error_t error = 0;
@@ -343,7 +343,7 @@ soxr_t soxr_create(
     }
 #endif
 
-    if (p->num_channels && io_ratio)
+    if (p->num_channels && io_ratio!=0)
       error = soxr_set_io_ratio(p, io_ratio, 0);
   }
   if (error)
