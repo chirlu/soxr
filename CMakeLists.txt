@@ -34,15 +34,13 @@ if (NOT CMAKE_BUILD_TYPE)
   set (CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif ()
 
-if (NOT CMAKE_CROSSCOMPILING)
-  option (BUILD_TESTS "Build sanity-tests."  ON)
-else ()
-  set (BUILD_TESTS OFF)
-endif ()
 option (BUILD_SHARED_LIBS "Build shared libraries." ON)
 option (BUILD_EXAMPLES "Build examples." OFF)
 option (WITH_OPENMP "Include OpenMP threading." ON)
 option (WITH_LSR_BINDINGS "Include a `libsamplerate'-like interface." ON)
+
+cmake_dependent_option (BUILD_TESTS "Build sanity-tests."  ON
+  "NOT CMAKE_CROSSCOMPILING" OFF)
 cmake_dependent_option (WITH_SINGLE_PRECISION "Build with single precision (for up to 20-bit accuracy)." ON
   "WITH_DOUBLE_PRECISION" ON)
 cmake_dependent_option (WITH_DOUBLE_PRECISION "Build with double precision (for up to 32-bit accuracy)." ON
@@ -53,13 +51,11 @@ cmake_dependent_option (WITH_AVFFT "Use libavcodec (LGPL) for SIMD DFT." OFF
   "WITH_SIMD;NOT WITH_PFFFT" OFF)
 cmake_dependent_option (WITH_PFFFT "Use PFFFT (BSD-like licence) for SIMD DFT." ON
   "WITH_SIMD;NOT WITH_AVFFT" OFF)
-if (UNIX AND NOT CMAKE_CROSSCOMPILING AND EXISTS ${PROJECT_SOURCE_DIR}/lsr-tests)
-  cmake_dependent_option (BUILD_LSR_TESTS "Build LSR tests." OFF
-    "WITH_LSR_BINDINGS" OFF)
-else ()
-  set (BUILD_LSR_TESTS OFF)
-endif ()
+cmake_dependent_option (BUILD_LSR_TESTS "Build LSR tests." OFF
+  "UNIX;NOT CMAKE_CROSSCOMPILING;EXISTS ${PROJECT_SOURCE_DIR}/lsr-tests;WITH_LSR_BINDINGS" OFF)
+
 option (WITH_DEV_TRACE "Enable developer trace output." OFF)
+mark_as_advanced (WITH_DEV_TRACE)
 
 
 
