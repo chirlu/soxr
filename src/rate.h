@@ -426,12 +426,12 @@ static char const * rate_init(
     postM = 1 + (arbM > 1 && preM), arbM /= postM;
     preL = 1 + (!preM && arbM < 2) + (upsample && mode), arbM *= preL;
     if ((frac = arbM - (int)arbM)!=0)
-      epsilon = fabs((uint32_t)(frac * MULT32 + .5) / (frac * MULT32) - 1);
+      epsilon = fabs(floor(frac * MULT32 + .5) / (frac * MULT32) - 1);
     for (i = 1, rational = frac==0; i <= maxL && !rational; ++i) {
       d = frac * i, try = (int)(d + .5);
       if ((rational = fabs(try / d - 1) <= epsilon)) {    /* No long doubles! */
         if (try == i)
-          arbM = ceil(arbM), shift += arbM > 2, arbM /= 1 + (arbM > 2);
+          arbM = ceil(arbM), shift += x = arbM > 3, arbM /= 1 + x;                                                         
         else arbM = i * (int)arbM + try, arbL = i;
       }
     }
