@@ -98,7 +98,7 @@ if (WITH_AVFFT)
   endif ()
 endif ()
 
-if (CMAKE_SYSTEM_PROCESSOR MATCHES "^arm" AND SIMD_FOUND)
+if (WITH_AVFFT OR (CMAKE_SYSTEM_PROCESSOR MATCHES "^arm" AND SIMD_FOUND))
   find_package (LibAVUtil)
   if (AVUTIL_FOUND)
     include_directories (${AVUTIL_INCLUDE_DIRS})

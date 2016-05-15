@@ -6,8 +6,14 @@
 #include <stdlib.h>
 #include "simd.h"
 #include "simd-dev.h"
+#include "soxr-config.h"
 
-#define SIMD_ALIGNMENT (sizeof(float) * 4)
+#if AVCODEC_FOUND
+  #define SIMD_ALIGNMENT (sizeof(double) * 4)
+#else
+  #define SIMD_ALIGNMENT (sizeof(float) * 4)
+#endif
+
 
 void * _soxr_simd_aligned_malloc(size_t size)
 {
