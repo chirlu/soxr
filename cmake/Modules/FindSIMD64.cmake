@@ -15,11 +15,11 @@ else ()
     "/arch:AVX" # MSVC
   )
   set (TEST_C_SOURCE "
+    #ifndef __AVX__
+      #error
+    #endif
     #include <immintrin.h>
-    int main() {
-      __m256d a = _mm256_setzero_pd(), b = a, c = _mm256_add_pd(a,b);
-      return 0;
-    }
+    int main() {return 0;}
     ")
 endif ()
 

@@ -35,7 +35,7 @@ else ()
     # MSVC x86
     "/arch:SSE /fp:fast -D__SSE__"
     # Gcc x86
-    "-Wno-cast-align -msse -mfpmath=sse ${GCC_WIN32_SIMD32_OPTS}"
+    "-msse -mfpmath=sse ${GCC_WIN32_SIMD32_OPTS}"
     # Gcc x86 (old versions)
     "-msse -mfpmath=sse"
   )
