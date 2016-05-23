@@ -1,0 +1,4 @@
+#!/bin/sh
+set -e
+
+for n in `seq 0 3`; do ./throughput 44.1 48 1 0 $n; done

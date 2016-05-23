@@ -3,23 +3,22 @@
 
 #if !defined PFFT_MACROS_ONLY
 
-#include "simd.h"
-#include <math.h>
+#include "math-wrap.h"
 
-#define pffft_aligned_free    _soxr_simd_aligned_free
-#define pffft_aligned_malloc  _soxr_simd_aligned_malloc
-#define pffft_aligned_calloc  _soxr_simd_aligned_calloc
+#if PFFFT_DOUBLE
+  #include "simd64.h"
+#else
+  #include "simd32.h"
+  #define sin(x) sinf(x)
+  #define cos(x) cosf(x)
+#endif
+
+#define pffft_aligned_free    SIMD_ALIGNED_FREE
+#define pffft_aligned_malloc  SIMD_ALIGNED_MALLOC
+#define pffft_aligned_calloc  SIMD_ALIGNED_CALLOC
 
 #undef inline
 #define inline __inline
-
-#if defined _MSC_VER
-  #define sin (float)sin
-  #define cos (float)cos
-#else
-  #define sin(x) sinf((float)(x))
-  #define cos(x) cosf((float)(x))
-#endif
 
 #endif
 

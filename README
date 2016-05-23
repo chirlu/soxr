@@ -1,4 +1,4 @@
-SoX Resampler Library       Copyright (c) 2007-13 robs@users.sourceforge.net
+SoX Resampler Library       Copyright (c) 2007-16 robs@users.sourceforge.net
 
 The SoX Resampler library `libsoxr' performs one-dimensional sample-rate
 conversion -- it may be used, for example, to resample PCM-encoded audio.

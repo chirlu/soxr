@@ -35,7 +35,7 @@ set (tests
   callback_hang_test callback_test downsample_test
   float_short_test misc_test multi_channel_test
   reset_test simple_test termination_test varispeed_test)
-if (WITH_DOUBLE_PRECISION)
+if (WITH_CR64 OR WITH_CR64S)
   set (tests ${tests} snr_bw_test)
 endif ()
 

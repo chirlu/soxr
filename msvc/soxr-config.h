@@ -7,12 +7,14 @@
 #if !defined soxr_config_included
 #define soxr_config_included
 
-#define WITH_SINGLE_PRECISION 1
-#define WITH_DOUBLE_PRECISION 1
+#define WITH_CR32 1
+#define WITH_CR32S 1
+#define WITH_CR64 1
+#define WITH_CR64S 1
+#define WITH_VR32 1
 
 #define AVCODEC_FOUND 0
 #define AVUTIL_FOUND 0
-#define SIMD_FOUND 1
 
 #define HAVE_FENV_H 0
 #define HAVE_STDBOOL_H 0

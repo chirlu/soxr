@@ -1,16 +1,18 @@
-# SoX Resampler Library       Copyright (c) 2007-13 robs@users.sourceforge.net
+# SoX Resampler Library       Copyright (c) 2007-16 robs@users.sourceforge.net
 # Licence for this file: LGPL v2.1                  See LICENCE for details.
+
+if (${BUILD_EXAMPLES} OR ${BUILD_TESTS})
+  set (SOURCES 3-options-input-fn)
+  if (${WITH_LSR_BINDINGS})
+    set (LSR_SOURCES 1a-lsr)
+  endif ()
+endif ()
 
 if (${BUILD_EXAMPLES})
   project (soxr) # Adds c++ compiler
-  file (GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/[1-9]-*.[cC])
-elseif (${BUILD_TESTS})
-  file (GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/3*.c)
-endif ()
-
-if (${BUILD_EXAMPLES} OR ${BUILD_TESTS})
-  if (${WITH_LSR_BINDINGS})
-    set (LSR_SOURCES 1a-lsr.c)
+  list (APPEND SOURCES 1-single-block 2-stream 4-split-channels)
+  if (${WITH_VR32})
+    list (APPEND SOURCES 5-variable-rate)
   endif ()
 endif ()
 
@@ -34,4 +36,5 @@ if (${BUILD_TESTS} AND ${WITH_LSR_BINDINGS})
 endif ()
 
 file (GLOB INSTALL_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.[cCh])
-install (FILES ${INSTALL_SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/README DESTINATION ${DOC_INSTALL_DIR}/examples)
+install (FILES ${INSTALL_SOURCES} ${CMAKE_CURRENT_SOURCE_DIR}/README
+    DESTINATION ${DOC_INSTALL_DIR}/examples)

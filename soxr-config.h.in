@@ -4,12 +4,14 @@
 #if !defined soxr_config_included
 #define soxr_config_included
 
-#cmakedefine01 WITH_SINGLE_PRECISION
-#cmakedefine01 WITH_DOUBLE_PRECISION
+#cmakedefine01 WITH_CR32
+#cmakedefine01 WITH_CR32S
+#cmakedefine01 WITH_CR64
+#cmakedefine01 WITH_CR64S
+#cmakedefine01 WITH_VR32
 
 #cmakedefine01 AVCODEC_FOUND
 #cmakedefine01 AVUTIL_FOUND
-#cmakedefine01 SIMD_FOUND
 
 #cmakedefine01 HAVE_FENV_H
 #cmakedefine01 HAVE_STDBOOL_H

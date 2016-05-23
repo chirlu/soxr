@@ -1,6 +1,8 @@
 Version 0.1.3 (2016-mm-dd)
-  * Better support for clang, ARM+SIMD, and cross-compilation.
+  * SIMD enhancements: SSE, AVX, Neon.
+  * Improved support for clang, ARM, and cross-compilation.
   * Other minor fixes/improvements to build/tests/documentation.
+  * N.B. some cmake configuration variable name changes.
 
 Version 0.1.2 (2015-09-05)
   * Fix conversion failure when I/O types differ but I/O rates don't.

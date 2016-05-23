@@ -133,9 +133,11 @@ inline v4sf ld_ps1(const float *p) { v4sf v=vec_lde(0,p); return vec_splat(vec_p
 */
 #elif !defined(PFFFT_SIMD_DISABLE) && (defined(__x86_64__) || defined(_M_X64) || defined(i386) || defined(_M_IX86))
 
+#  define SIMD_SZ 4 /* 4 floats by simd vector -- this is pretty much hardcoded in the preprocess/finalize functions anyway so you will have to work if you want to enable AVX with its 256-bit vectors. */
+
+#if !PFFFT_DOUBLE
 #include <xmmintrin.h>
 typedef __m128 v4sf;
-#  define SIMD_SZ 4 /* 4 floats by simd vector -- this is pretty much hardcoded in the preprocess/finalize functions anyway so you will have to work if you want to enable AVX with its 256-bit vectors. */
 #  define VZERO() _mm_setzero_ps()
 #  define VMUL(a,b) _mm_mul_ps(a,b)
 #  define VADD(a,b) _mm_add_ps(a,b)
@@ -147,6 +149,10 @@ typedef __m128 v4sf;
 #  define VTRANSPOSE4(x0,x1,x2,x3) _MM_TRANSPOSE4_PS(x0,x1,x2,x3)
 #  define VSWAPHL(a,b) _mm_shuffle_ps(b, a, _MM_SHUFFLE(3,2,1,0))
 #  define VALIGNED(ptr) ((((long)(ptr)) & 0xF) == 0)
+
+#else
+#include "avx.h"
+#endif
 
 /*
   ARM NEON support macros
@@ -181,6 +187,10 @@ typedef float32x4_t v4sf;
 #  endif
 #endif
 
+#if PFFFT_DOUBLE
+#define float double
+#endif
+
 /* fallback mode for situations where SSE/Altivec are not available, use scalar mode instead */
 #ifdef PFFFT_SIMD_DISABLE
 typedef float v4sf;
@@ -202,6 +212,8 @@ typedef float v4sf;
 #define SVMUL(f,v) VMUL(LD_PS1(f),v)
 #endif
 
+#if !defined PFFT_MACROS_ONLY
+
 #if !defined(PFFFT_SIMD_DISABLE)
 typedef union v4sf_union {
   v4sf  v;
@@ -214,7 +226,8 @@ typedef union v4sf_union {
 #define assertv4(v,f0,f1,f2,f3) assert(v.f[0] == (f0) && v.f[1] == (f1) && v.f[2] == (f2) && v.f[3] == (f3))
 
 /* detect bugs with the vector support macros */
-void validate_pffft_simd() {
+void validate_pffft_simd(void);
+void validate_pffft_simd(void) {
   float f[16] = { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 };
   v4sf_union a0, a1, a2, a3, t, u;
   memcpy(a0.f, f, 4*sizeof(float));
@@ -230,7 +243,6 @@ void validate_pffft_simd() {
   printf("VMUL(4:7,8:11)=[%2g %2g %2g %2g]\n", t.f[0], t.f[1], t.f[2], t.f[3]); assertv4(t, 32, 45, 60, 77);
   t.v = VMADD(a1.v, a2.v,a0.v);
   printf("VMADD(4:7,8:11,0:3)=[%2g %2g %2g %2g]\n", t.f[0], t.f[1], t.f[2], t.f[3]); assertv4(t, 32, 46, 62, 80);
-
   INTERLEAVE2(a1.v,a2.v,t.v,u.v);
   printf("INTERLEAVE2(4:7,8:11)=[%2g %2g %2g %2g] [%2g %2g %2g %2g]\n", t.f[0], t.f[1], t.f[2], t.f[3], u.f[0], u.f[1], u.f[2], u.f[3]);
   assertv4(t, 4, 8, 5, 9); assertv4(u, 6, 10, 7, 11);
@@ -270,8 +282,6 @@ void pffft_aligned_free(void *p) {
 
 int pffft_simd_size() { return SIMD_SZ; }
 #endif
-
-#if !defined PFFT_MACROS_ONLY
 
 /*
   passf2 and passb2 has been merged here, fsign = -1 for passf2, +1 for passb2

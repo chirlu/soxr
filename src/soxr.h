@@ -1,4 +1,4 @@
-/* SoX Resampler Library       Copyright (c) 2007-13 robs@users.sourceforge.net
+/* SoX Resampler Library       Copyright (c) 2007-16 robs@users.sourceforge.net
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -269,9 +269,6 @@ struct soxr_runtime_spec {                                       /* Typically */
 #define SOXR_COEF_INTERP_LOW   2u    /* Man. select: less CPU, more memory. */
 #define SOXR_COEF_INTERP_HIGH  3u    /* Man. select: more CPU, less memory. */
 
-#define SOXR_STRICT_BUFFERING  4u  /* Reserved for future use. */
-#define SOXR_NOSMALLINTOPT     8u  /* For test purposes only. */
-
 
 
 /* -------------------------- API type constructors ------------------------- */
@@ -296,7 +293,7 @@ SOXR soxr_quality_spec_t soxr_quality_spec(
 #define SOXR_24_BITQ            5
 #define SOXR_28_BITQ            6
 #define SOXR_32_BITQ            7
-                                    /* Libsamplerate equivalent qualities: */
+                                    /* For internal use only; to be removed: */
 #define SOXR_LSR0Q              8     /* 'Best sinc'. */
 #define SOXR_LSR1Q              9     /* 'Medium sinc'. */
 #define SOXR_LSR2Q              10    /* 'Fast sinc'. */
@@ -304,8 +301,8 @@ SOXR soxr_quality_spec_t soxr_quality_spec(
 #define SOXR_LINEAR_PHASE       0x00
 #define SOXR_INTERMEDIATE_PHASE 0x10
 #define SOXR_MINIMUM_PHASE      0x30
+
 #define SOXR_STEEP_FILTER       0x40
-#define SOXR_ALLOW_ALIASING     0x80  /* Reserved for future use. */
 
 
 

@@ -88,6 +88,10 @@
 extern "C" {
 #endif
 
+#if PFFFT_DOUBLE
+#define float double
+#endif
+
   /* opaque struct holding internal stuff (precomputed twiddle factors)
      this struct can be shared by many threads as it contains only
      read-only data.
@@ -181,6 +185,8 @@ extern "C" {
   /* return 4 or 1 wether support SSE/Altivec instructions was enable when building pffft.c */
   int pffft_simd_size();
 #endif
+
+#undef float
 
 #ifdef __cplusplus
 }

@@ -1,4 +1,4 @@
-/* SoX Resampler Library      Copyright (c) 2007-13 robs@users.sourceforge.net
+/* SoX Resampler Library      Copyright (c) 2007-16 robs@users.sourceforge.net
  * Licence for this file: LGPL v2.1                  See LICENCE for details. */
 
 /* Common includes etc. for the examples.  */
@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <limits.h>
-#include <math.h>
+#include "math-wrap.h"
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,10 +17,7 @@
   #include <io.h>
   #include <fcntl.h>
   #define USE_STD_STDIO _setmode(_fileno(stdout), _O_BINARY), \
-                        _setmode(_fileno(stdin ), _O_BINARY);
-  /* Sometimes missing, so ensure that it is defined: */
-  #undef M_PI
-  #define M_PI 3.14159265358979323846
+                        _setmode(_fileno(stdin ), _O_BINARY)
 #else
   #define USE_STD_STDIO
 #endif

@@ -35,7 +35,7 @@ test z$1 != z && j=$1 || j=1
 
 for c in `seq 1 $j`; do
   for n in `seq 0 3`; do
-    sox -r $ir -n $c.${types[$n]} synth $len sin $f gain -.1
+    sox -R -r $ir -n $c.${types[$n]} synth $len sin $f gain -.1
   done
 
   n=0

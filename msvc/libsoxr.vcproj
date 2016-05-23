@@ -60,6 +60,12 @@
 	</References>
 	<Files>
 		<Filter Name="Source Files" >
+			<File RelativePath="../src/constructors.c" />
+			<File RelativePath="../src/cr.c" />
+			<File RelativePath="../src/cr32.c" />
+			<File RelativePath="../src/cr32s.c" />
+			<File RelativePath="../src/cr64.c" />
+			<File RelativePath="../src/cr64s.c" />
 			<File RelativePath="../src/data-io.c" />
 			<File RelativePath="../src/dbesi0.c" />
 			<File RelativePath="../src/fft4g32.c" />
@@ -67,10 +73,9 @@
 			<File RelativePath="../src/filter.c" />
 			<File RelativePath="../src/lsr.c" />
 			<File RelativePath="../src/pffft32s.c" />
-			<File RelativePath="../src/rate32.c" />
-			<File RelativePath="../src/rate32s.c" />
-			<File RelativePath="../src/rate64.c" />
-			<File RelativePath="../src/simd.c" />
+			<File RelativePath="../src/pffft64s.c" />
+			<File RelativePath="../src/simd32.c" />
+			<File RelativePath="../src/simd64.c" />
 			<File RelativePath="../src/soxr.c" />
 			<File RelativePath="../src/vr32.c" />
 		</Filter>

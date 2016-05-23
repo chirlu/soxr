@@ -4,7 +4,8 @@
 cmake_minimum_required (VERSION 3.0 FATAL_ERROR)
 
 project (soxr C)
-set (DESCRIPTION_SUMMARY "High quality, one-dimensional sample-rate conversion library")
+set (DESCRIPTION_SUMMARY
+    "High quality, one-dimensional sample-rate conversion library")
 
 
 
@@ -15,14 +16,19 @@ set (PROJECT_VERSION_MINOR 1)
 set (PROJECT_VERSION_PATCH 2)
 
 # For shared-object; if, since the last public release:
-#  * library code changed at all: ++revision
-#  * interfaces changed at all:   ++current, revision = 0
-#  * interfaces added:            ++age
-#  * interfaces removed:          age = 0
+#
+#  1) library code changed at all: ++revision
+#  2) interfaces changed at all:   ++current, revision = 0
+#  3) interfaces added:            ++age
+#  4) interfaces removed:          age = 0
 
 set (SO_VERSION_CURRENT  1)
 set (SO_VERSION_REVISION 1)
 set (SO_VERSION_AGE      1)
+
+math (EXPR SO_VERSION_MAJOR "${SO_VERSION_CURRENT} - ${SO_VERSION_AGE}")
+math (EXPR SO_VERSION_MINOR "${SO_VERSION_AGE}")
+math (EXPR SO_VERSION_PATCH "${SO_VERSION_REVISION}")
 
 
 
@@ -31,31 +37,45 @@ set (SO_VERSION_AGE      1)
 include (CMakeDependentOption)
 
 if (NOT CMAKE_BUILD_TYPE)
-  set (CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
+  set (CMAKE_BUILD_TYPE Release CACHE STRING
+    "Build type, one of: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif ()
 
-option (BUILD_SHARED_LIBS "Build shared libraries." ON)
+option (BUILD_TESTS "Build sanity-tests." ON)
 option (BUILD_EXAMPLES "Build examples." OFF)
 option (WITH_OPENMP "Include OpenMP threading." ON)
 option (WITH_LSR_BINDINGS "Include a `libsamplerate'-like interface." ON)
 
-cmake_dependent_option (BUILD_TESTS "Build sanity-tests."  ON
-  "NOT CMAKE_CROSSCOMPILING" OFF)
-cmake_dependent_option (WITH_SINGLE_PRECISION "Build with single precision (for up to 20-bit accuracy)." ON
-  "WITH_DOUBLE_PRECISION" ON)
-cmake_dependent_option (WITH_DOUBLE_PRECISION "Build with double precision (for up to 32-bit accuracy)." ON
-  "WITH_SINGLE_PRECISION" ON)
-cmake_dependent_option (WITH_SIMD "Use SIMD (for faster single precision)." ON
-  "WITH_SINGLE_PRECISION" OFF)
-cmake_dependent_option (WITH_AVFFT "Use libavcodec (LGPL) for SIMD DFT." OFF
-  "WITH_SIMD;NOT WITH_PFFFT" OFF)
-cmake_dependent_option (WITH_PFFFT "Use PFFFT (BSD-like licence) for SIMD DFT." ON
-  "WITH_SIMD;NOT WITH_AVFFT" OFF)
+cmake_dependent_option (BUILD_SHARED_LIBS
+  "Build shared (dynamic) soxr libraries." ON
+  "NOT WITH_DEV_GPROF" OFF)
+cmake_dependent_option (WITH_VR32
+  "Include HQ variable-rate resampling engine." ON
+  "WITH_CR32 OR WITH_CR64 OR WITH_CR32S OR WITH_CR64S OR NOT DEFINED WITH_VR32" ON)
+cmake_dependent_option (WITH_CR32
+  "Include HQ constant-rate resampling engine." ON
+  "WITH_VR32 OR WITH_CR64 OR WITH_CR32S OR WITH_CR64S" ON)
+cmake_dependent_option (WITH_CR64
+  "Include VHQ constant-rate resampling engine." ON
+  "WITH_VR32 OR WITH_CR32 OR WITH_CR32S OR WITH_CR64S" ON)
+cmake_dependent_option (WITH_CR64S
+  "Include VHQ SIMD constant-rate resampling engine." ON
+  "WITH_VR32 OR WITH_CR32 OR WITH_CR32S OR WITH_CR64" ON)
+cmake_dependent_option (WITH_CR32S
+  "Include HQ SIMD constant-rate resampling engine." ON
+  "WITH_VR32 OR WITH_CR64 OR WITH_CR32 OR WITH_CR64S" ON)
+cmake_dependent_option (WITH_AVFFT
+  "Use libavcodec (LGPL) for HQ SIMD DFT." OFF
+  "WITH_CR32S;NOT WITH_PFFFT" OFF)
+cmake_dependent_option (WITH_PFFFT
+  "Use PFFFT (BSD-like licence) for HQ SIMD DFT." ON
+  "WITH_CR32S;NOT WITH_AVFFT" OFF)
 cmake_dependent_option (BUILD_LSR_TESTS "Build LSR tests." OFF
   "UNIX;NOT CMAKE_CROSSCOMPILING;EXISTS ${PROJECT_SOURCE_DIR}/lsr-tests;WITH_LSR_BINDINGS" OFF)
 
-option (WITH_DEV_TRACE "Enable developer trace output." OFF)
-mark_as_advanced (WITH_DEV_TRACE)
+option (WITH_DEV_TRACE "Enable developer trace capability." ON)
+option (WITH_DEV_GPROF "Enable developer grpof output." OFF)
+mark_as_advanced (WITH_DEV_TRACE WITH_DEV_GPROF)
 
 
 
@@ -79,15 +99,23 @@ endif ()
 
 if (WITH_OPENMP)
   find_package (OpenMP)
-  if (OPENMP_FOUND)
+  if (OpenMP_FOUND)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-    set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-    set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${OpenMP_SHARED_LINKER_FLAGS}")
+    set (CMAKE_EXE_LINKER_FLAGS
+        "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+    set (CMAKE_SHARED_LINKER_FLAGS
+        "${CMAKE_SHARED_LINKER_FLAGS} ${OpenMP_SHARED_LINKER_FLAGS}")
   endif ()
 endif ()
 
-if (WITH_SIMD)
-  find_package (SIMD)
+if (WITH_CR32S)
+  find_package (SIMD32)
+  set (WITH_CR32S ${SIMD32_FOUND})
+endif ()
+
+if (WITH_CR64S)
+  find_package (SIMD64)
+  set (WITH_CR64S ${SIMD64_FOUND})
 endif ()
 
 if (WITH_AVFFT)
@@ -98,7 +126,7 @@ if (WITH_AVFFT)
   endif ()
 endif ()
 
-if (WITH_AVFFT OR (CMAKE_SYSTEM_PROCESSOR MATCHES "^arm" AND SIMD_FOUND))
+if (WITH_AVFFT OR (CMAKE_SYSTEM_PROCESSOR MATCHES "^arm" AND SIMD32_FOUND))
   find_package (LibAVUtil)
   if (AVUTIL_FOUND)
     include_directories (${AVUTIL_INCLUDE_DIRS})
@@ -117,13 +145,22 @@ test_big_endian (HAVE_BIGENDIAN)
 # Compiler configuration:
 
 if (CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
-  set (PROJECT_CXX_FLAGS "-Wconversion -Wall -W -pedantic -Wundef -Wcast-align -Wpointer-arith -Wno-long-long")
-  set (PROJECT_C_FLAGS "${PROJECT_CXX_FLAGS} -std=gnu89 -Wnested-externs -Wmissing-prototypes -Wstrict-prototypes")
+  set (PROJECT_CXX_FLAGS "${PROJECT_CXX_FLAGS} -Wconversion -Wall -Wextra")
+  set (PROJECT_CXX_FLAGS "${PROJECT_CXX_FLAGS} -pedantic -Wundef -Wpointer-arith")
+  set (PROJECT_CXX_FLAGS "${PROJECT_CXX_FLAGS} -Wno-long-long -Wno-keyword-macro")
+  if (WITH_DEV_GPROF)
+    set (PROJECT_CXX_FLAGS "${PROJECT_CXX_FLAGS} -pg")
+  endif ()
+  # Can use std=c89, but gnu89 should give faster sinf, cosf, etc.:
+  set (PROJECT_C_FLAGS "${PROJECT_CXX_FLAGS} -std=gnu89 -Wnested-externs")
+  set (PROJECT_C_FLAGS "${PROJECT_C_FLAGS} -Wmissing-prototypes -Wstrict-prototypes")
   if (CMAKE_BUILD_TYPE STREQUAL "Release")
     set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -s") # strip
   endif ()
-  cmake_dependent_option (VISIBILITY_HIDDEN "Build with -fvisibility=hidden." ON
+  cmake_dependent_option (VISIBILITY_HIDDEN
+    "Build shared libraries with -fvisibility=hidden." ON
     "BUILD_SHARED_LIBS" OFF)
+  mark_as_advanced (VISIBILITY_HIDDEN)
   if (VISIBILITY_HIDDEN)
     add_definitions (-fvisibility=hidden -DSOXR_VISIBILITY)
   endif ()
@@ -131,9 +168,14 @@ endif ()
 
 if (MSVC)
   add_definitions (-D_USE_MATH_DEFINES -D_CRT_SECURE_NO_WARNINGS)
-  option (ENABLE_STATIC_RUNTIME "Visual Studio, link with runtime statically."  OFF)
-  if (ENABLE_STATIC_RUNTIME)
-    foreach (flag_var CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+  option (BUILD_SHARED_RUNTIME "MSVC, link with runtime dynamically."  ON)
+  if (NOT BUILD_SHARED_RUNTIME)
+    foreach (flag_var
+        CMAKE_C_FLAGS                CMAKE_CXX_FLAGS
+        CMAKE_C_FLAGS_DEBUG          CMAKE_CXX_FLAGS_DEBUG
+        CMAKE_C_FLAGS_RELEASE        CMAKE_CXX_FLAGS_RELEASE
+        CMAKE_C_FLAGS_MINSIZEREL     CMAKE_CXX_FLAGS_MINSIZEREL
+        CMAKE_C_FLAGS_RELWITHDEBINFO CMAKE_CXX_FLAGS_RELWITHDEBINFO)
       string (REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
     endforeach ()
   endif ()
@@ -147,7 +189,8 @@ endif ()
 
 # Build configuration:
 
-if (${BUILD_SHARED_LIBS} AND ${CMAKE_SYSTEM_NAME} STREQUAL Windows) # Allow exes to find dlls:
+if (${BUILD_SHARED_LIBS} AND ${CMAKE_SYSTEM_NAME} STREQUAL Windows)
+  # Allow exes to find dlls:
   set (BIN ${PROJECT_BINARY_DIR}/bin/)
   set (EXAMPLES_BIN ${BIN})
   set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BIN})
@@ -188,17 +231,16 @@ endif ()
 
 if (APPLE)
   option (BUILD_FRAMEWORK "Build an OS X framework." OFF)
-  set (FRAMEWORK_INSTALL_DIR "/Library/Frameworks" CACHE STRING "Directory to install frameworks to.")
+  set (FRAMEWORK_INSTALL_DIR
+      "/Library/Frameworks" CACHE STRING "Directory to install frameworks to.")
 endif ()
 
 
 
 # Top-level:
 
-set (PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
-math (EXPR SO_VERSION_MAJOR "${SO_VERSION_CURRENT} - ${SO_VERSION_AGE}")
-math (EXPR SO_VERSION_MINOR "${SO_VERSION_AGE}")
-math (EXPR SO_VERSION_PATCH "${SO_VERSION_REVISION}")
+set (PROJECT_VERSION
+    ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
 set (SO_VERSION ${SO_VERSION_MAJOR}.${SO_VERSION_MINOR}.${SO_VERSION_PATCH})
 
 configure_file (
@@ -206,7 +248,7 @@ configure_file (
   ${PROJECT_BINARY_DIR}/${PROJECT_NAME}-config.h)
 include_directories (${PROJECT_BINARY_DIR})
 
-if (BUILD_TESTS OR BUILD_LSR_TESTS)
+if (NOT CMAKE_CROSSCOMPILING AND (BUILD_TESTS OR BUILD_LSR_TESTS))
   enable_testing ()
 endif ()
 

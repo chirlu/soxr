@@ -9,6 +9,7 @@
 #endif
 
 #if !defined FIFO_REALLOC
+#include <stdlib.h>
   #define FIFO_REALLOC(a,b,c) realloc(a,b)
   #undef FIFO_FREE
   #define FIFO_FREE free
