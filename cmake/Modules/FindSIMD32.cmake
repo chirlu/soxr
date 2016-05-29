@@ -19,9 +19,9 @@ elseif (CMAKE_SYSTEM_PROCESSOR MATCHES "^arm")
   )
   set (TEST_C_SOURCE "
     #include <arm_neon.h>
-    int main() {
-      float32x4_t a = vdupq_n_f32(0), b = a, c = vaddq_f32(a,b);
-      return 0;
+    int main(int c, char * * v) {
+      float32x4_t a = vdupq_n_f32((float)c), b = vdupq_n_f32((float)!!v);
+      return !vgetq_lane_u32(vceqq_f32(a,b),0);
     }
   ")
 else ()
@@ -41,9 +41,9 @@ else ()
   )
   set (TEST_C_SOURCE "
     #include <xmmintrin.h>
-    int main() {
-      __m128 a = _mm_setzero_ps(), b = a, c = _mm_add_ps(a,b);
-      return 0;
+    int main(int c, char * * v) {
+      __m128 a = _mm_set_ss((float)c), b = _mm_set_ss((float)!!v);
+      return _mm_comineq_ss(a,b);
     }
   ")
 endif ()

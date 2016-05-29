@@ -103,6 +103,9 @@ static void iir(int N, double Fp, char const * name)
 
 int main(int argc, char **argv)
 {
+  puts("/* SoX Resampler Library      Copyright (c) 2007-16 robs@users.sourceforge.net");
+  puts(" * Licence for this file: LGPL v2.1                  See LICENCE for details. */\n");
+
   fir(241,  1, .45,  .5, 160, 32, "half_fir_coefs");
   fir( 24, .5, .25,  .5,   1, 31, "fast_half_fir_coefs");
   fir( 20, 12, .9 , 1.5, 160, 58, "coefs0_d");

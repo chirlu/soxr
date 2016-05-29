@@ -1,8 +1,8 @@
 /* SoX Resampler Library      Copyright (c) 2007-16 robs@users.sourceforge.net
  * Licence for this file: LGPL v2.1                  See LICENCE for details. */
 
-#if !defined soxr_rate1_included
-#define soxr_rate1_included
+#if !defined soxr_cr_included
+#define soxr_cr_included
 
 #define  FIFO_SIZE_T int
 #include "fifo.h"

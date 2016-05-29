@@ -31,11 +31,11 @@
 
   #if CORE_TYPE & (CORE_SIMD_POLY|CORE_SIMD_HALF|CORE_SIMD_DFT)
     #if CORE_TYPE & CORE_DBL
-      #include "simd64.h"
-      #include "simd64-dev.h"
+      #include "util64s.h"
+      #include "dev64s.h"
     #else
-      #include "simd32.h"
-      #include "simd32-dev.h"
+      #include "util32s.h"
+      #include "dev32s.h"
     #endif
   #endif
 

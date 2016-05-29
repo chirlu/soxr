@@ -1,6 +1,10 @@
 # SoX Resampler Library       Copyright (c) 2007-16 robs@users.sourceforge.net
 # Licence for this file: LGPL v2.1                  See LICENCE for details.
 
+set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${PROJECT_C_FLAGS}")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${PROJECT_CXX_FLAGS}")
+link_libraries (${PROJECT_NAME} ${LIBM_LIBRARIES})
+
 if (${BUILD_EXAMPLES} OR ${BUILD_TESTS})
   set (SOURCES 3-options-input-fn)
   if (${WITH_LSR_BINDINGS})
@@ -9,19 +13,11 @@ if (${BUILD_EXAMPLES} OR ${BUILD_TESTS})
 endif ()
 
 if (${BUILD_EXAMPLES})
-  project (soxr) # Adds c++ compiler
   list (APPEND SOURCES 1-single-block 2-stream 4-split-channels)
   if (${WITH_VR32})
     list (APPEND SOURCES 5-variable-rate)
   endif ()
 endif ()
-
-if (NOT BUILD_SHARED_LIBS AND OPENMP_FOUND)
-  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_C_FLAGS}")
-endif ()
-set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${PROJECT_C_FLAGS}")
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${PROJECT_CXX_FLAGS}")
-link_libraries (${PROJECT_NAME} ${LIBM_LIBRARIES})
 
 foreach (fe ${SOURCES} ${LSR_SOURCES})
   get_filename_component (f ${fe} NAME_WE)

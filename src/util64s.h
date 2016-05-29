@@ -1,8 +1,8 @@
 /* SoX Resampler Library      Copyright (c) 2007-16 robs@users.sourceforge.net
  * Licence for this file: LGPL v2.1                  See LICENCE for details. */
 
-#if !defined simd64_included
-#define simd64_included
+#if !defined soxr_util64s_included
+#define soxr_util64s_included
 
 #include <stddef.h>
 

@@ -37,9 +37,9 @@
 #endif
 
 typedef float   SRC_SAMPLE;
+#if !defined SOXR_LIB
 enum SRC_SRCTYPE_e {SRC_SINC_BEST_QUALITY, SRC_SINC_MEDIUM_QUALITY,
                     SRC_SINC_FASTEST, SRC_ZERO_ORDER_HOLD, SRC_LINEAR};
-#if !defined SOXR_LIB
 typedef int     SRC_SRCTYPE;
 typedef int     SRC_ERROR;
 typedef long    (* src_callback_t)(void *, SRC_SAMPLE * *);

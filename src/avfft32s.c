@@ -3,7 +3,7 @@
 
 #include <math.h>
 #include <libavcodec/avfft.h>
-#include "simd32.h"
+#include "util32s.h"
 #include "rdft_t.h"
 
 static void * forward_setup(int len) {return av_rdft_init((int)(log(len)/log(2)+.5),DFT_R2C);}

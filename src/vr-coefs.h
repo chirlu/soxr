@@ -1,3 +1,6 @@
+/* SoX Resampler Library      Copyright (c) 2007-16 robs@users.sourceforge.net
+ * Licence for this file: LGPL v2.1                  See LICENCE for details. */
+
 static float const half_fir_coefs[] = {
  0.471112154f,  0.316907549f,  0.0286963396f, -0.101927032f,
 -0.0281272982f,  0.0568029535f,  0.027196876f, -0.0360795942f,

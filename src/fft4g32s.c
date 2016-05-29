@@ -2,7 +2,7 @@
  * Licence for this file: LGPL v2.1                  See LICENCE for details. */
 
 #include "filter.h"
-#include "simd.h"
+#include "util32s.h"
 #include "rdft_t.h"
 
 static void * null(void) {return 0;}

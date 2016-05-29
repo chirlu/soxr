@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="libsoxr"
-	ProjectGUID="{4916B0C1-2F99-433A-B88A-A99CB4E1E0AB}"
-	RootNamespace="libsoxr"
+	Name="example1"
+	ProjectGUID="{CA28595B-B14F-45FD-BA56-FBDFFB70FFC4}"
+	RootNamespace="soxr"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -18,14 +18,14 @@
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="2"
+			ConfigurationType="1"
 			CharacterSet="1"
 			>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="."
-				PreprocessorDefinitions="_USE_MATH_DEFINES;_CRT_SECURE_NO_WARNINGS;SOXR_LIB;SOXR_DLL;soxr_EXPORTS"
+				AdditionalIncludeDirectories="..\src"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -37,7 +37,7 @@
 				Name="VCLinkerTool"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
-				SubSystem="2"
+				SubSystem="1"
 				TargetMachine="1"
 			/>
 		</Configuration>
@@ -45,7 +45,7 @@
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="2"
+			ConfigurationType="1"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -53,8 +53,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="."
-				PreprocessorDefinitions="NDEBUG;_USE_MATH_DEFINES;_CRT_SECURE_NO_WARNINGS;SOXR_LIB;SOXR_DLL;soxr_EXPORTS"
+				AdditionalIncludeDirectories="..\src"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -65,7 +65,7 @@
 				Name="VCLinkerTool"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
-				SubSystem="2"
+				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
@@ -75,22 +75,7 @@
 	<References>
 	</References>
 	<Files>
-		<File RelativePath="..\src\cr.c" />
-		<File RelativePath="..\src\cr32.c" />
-		<File RelativePath="..\src\cr32s.c" />
-		<File RelativePath="..\src\cr64.c" />
-		<File RelativePath="..\src\cr64s.c" />
-		<File RelativePath="..\src\data-io.c" />
-		<File RelativePath="..\src\dbesi0.c" />
-		<File RelativePath="..\src\fft4g32.c" />
-		<File RelativePath="..\src\fft4g64.c" />
-		<File RelativePath="..\src\filter.c" />
-		<File RelativePath="..\src\pffft32s.c" />
-		<File RelativePath="..\src\pffft64s.c" />
-		<File RelativePath="..\src\util32s.c" />
-		<File RelativePath="..\src\util64s.c" />
-		<File RelativePath="..\src\soxr.c" />
-		<File RelativePath="..\src\vr32.c" />
+		<File RelativePath="..\examples\1-single-block.c" />
 	</Files>
 	<Globals>
 	</Globals>

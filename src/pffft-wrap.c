@@ -6,9 +6,9 @@
 #include "math-wrap.h"
 
 #if PFFFT_DOUBLE
-  #include "simd64.h"
+  #include "util64s.h"
 #else
-  #include "simd32.h"
+  #include "util32s.h"
   #define sin(x) sinf(x)
   #define cos(x) cosf(x)
 #endif

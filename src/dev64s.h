@@ -1,8 +1,8 @@
 /* SoX Resampler Library      Copyright (c) 2007-16 robs@users.sourceforge.net
  * Licence for this file: LGPL v2.1                  See LICENCE for details. */
 
-#if !defined soxr_simd64_dev_included
-#define soxr_simd64_dev_included
+#if !defined soxr_dev64s_included
+#define soxr_dev64s_included
 
 #if defined __GNUC__
   #define SIMD_INLINE(T) static __inline T __attribute__((always_inline))

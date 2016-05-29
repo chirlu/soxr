@@ -21,7 +21,7 @@ STANDARD BUILD
 
     * A 'make' utility (most compiler installations already have one of these).
 
-    * CMake: https://cmake.org/download/
+    * CMake v3.0 or newer: https://cmake.org/download/
 
 
 2. Build:
@@ -61,16 +61,18 @@ STANDARD BUILD
 
 BUILD CUSTOMISATION
 
-If it is necessary to customise the build, then steps 2 and 3 above may be
-substituted as follows.  Change directory to the one containing this file,
-then enter commands along the lines of:
+If it is necessary to customise the build, then steps 2 and 3 above should be
+substituted as follows: change directory to the one containing this file, then
+enter commands along the lines:
 
     mkdir build
     cd build
-    cmake [OPTIONS] ..
+    cmake -Wno-dev -DCMAKE_BUILD_TYPE=Release [OPTIONS] ..
     make
     make test
     sudo make install
+
+N.B. The CMAKE_BUILD_TYPE to use for library deployment is Release.
 
 To list help on the available options, enter:
 
@@ -78,13 +80,13 @@ To list help on the available options, enter:
 
 Options, if given, should be preceded with '-D', e.g.
 
-    cmake -DBUILD_SHARED_LIBS:BOOL=OFF ..
+    -DBUILD_SHARED_LIBS:BOOL=OFF
 
 
 
 Resampling engines
 
-As available on a given system, options for including up to five resampling
+As available on a given system, options for including up-to five resampling
 ‘engines’ are available (per above) as follows:
 
     WITH_CR32: for constant-rate HQ resampling,
@@ -98,7 +100,9 @@ By default, these options are all set to ON.
 When both SIMD and non-SIMD engine variants are included, run-time selection
 is automatic (based on CPU capability) for x86 CPUs, and can be automatic for
 ARM CPUs if the 3rd-party library `libavutil' is available at libsoxr
-build-time.
+build-time.  Which engine has been selected for a specific configuration and
+invocation of the library can be checked using example #3, which reports it.
+See also Run-time Configuration, below.
 
 
 
@@ -153,7 +157,7 @@ Autotools-based systems might find it useful to create a file called
     cmake -DBUILD_SHARED_LIBS=OFF .
 (or with other build options as required).
 
-For MS Visual C++, see msvc/README.
+For MS Visual Studio, see msvc/README.
 
 
 
@@ -161,11 +165,11 @@ RUN-TIME CONFIGURATION
 
 The libsoxr API structure ‘soxr_runtime_spec_t’ allows application developers
 to optimise some aspects of libsoxr’s operation for a particular application.
-However, since optimal performance might depend on an individual end-user’s
-run-time system and the end-user’s preferences, environment variables are
+Optimal performance however, might depend on an individual end-user’s run-
+time system and the end-user’s preferences.  Hence environment variables are
 available to set (override) run-time parameters as follows:
 
-    Env. variable        Equivalent soxr_runtime_spec_t item
+    Env. variable        Equivalent soxr_runtime_spec_t item (see soxr.h)
     ------------------   -----------------------------------
     SOXR_COEFS_SIZE      coef_size_kbytes
     SOXR_COEF_INTERP     SOXR_COEF_INTERP_xxx
@@ -173,8 +177,7 @@ available to set (override) run-time parameters as follows:
     SOXR_MIN_DFT_SIZE    log2_min_dft_size
     SOXR_NUM_THREADS     num_threads
 
-Additionally, the SOXR_USE_SIMD32 and SOXR_USE_SIMD64 environment variables
-may be used to override automatic selection (or to provide manual selection
-where automatic selection is not available) between SIMD and non-SIMD engine
-variants.  (Which engine is selected for a specific configuration of libsoxr
-can be checked using example #3, which reports it.)
+Additionally, the SOXR_USE_SIMD32 and SOXR_USE_SIMD64 boolean environment
+variables can be used to override automatic selection (or to provide manual
+selection where automatic selection is not available) between SIMD and
+non-SIMD engine variants.

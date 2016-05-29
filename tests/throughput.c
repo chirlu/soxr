@@ -6,24 +6,49 @@
 #include "../examples/examples-common.h"
 
 #define k 1000
+
 #if defined _WIN32
   #define WIN32_LEAN_AND_MEAN
   #include <windows.h>
-  #define timerDecl LARGE_INTEGER start, stop, tmp
-  #define timerStart(msecs) QueryPerformanceCounter(&start), \
-      QueryPerformanceFrequency(&tmp), \
+  #define timerStart(msecs) LARGE_INTEGER start, stop, tmp; \
+      QueryPerformanceCounter(&start), QueryPerformanceFrequency(&tmp), \
       stop.QuadPart = (msecs * tmp.QuadPart + k/2) / k
   #define timerRunning() (QueryPerformanceCounter(&tmp), \
       (tmp.QuadPart-start.QuadPart < stop.QuadPart))
 #else
   #include <time.h>
-  #define timerDecl struct timespec stop, tmp
-  #define timerStart(msecs) clock_gettime(CLOCK_MONOTONIC, &stop), \
-      stop.tv_nsec += (msecs%k)*(k*k), \
-      stop.tv_sec  += msecs/k + stop.tv_nsec/(k*k*k), \
-      stop.tv_nsec %= k*k*k
-  #define timerRunning() (clock_gettime(CLOCK_MONOTONIC, &tmp), \
-      (tmp.tv_sec < stop.tv_sec || tmp.tv_nsec < stop.tv_nsec))
+  #include <unistd.h>
+  #if defined _POSIX_TIMERS && _POSIX_TIMERS > 0
+    #define K (k*k)
+    #define tv_frac tv_nsec
+    #if defined _POSIX_MONOTONIC_CLOCK
+      #define get_time(x) clock_gettime(CLOCK_MONOTONIC, x)
+    #else
+      #define get_time(x) clock_gettime(CLOCK_REALTIME, x)
+    #endif
+  #else
+    #include <sys/time.h>
+    #if defined timeradd
+      #define K k
+      #define tv_frac tv_usec
+      #define timespec timeval
+      #define get_time(x) gettimeofday(x, NULL)
+    #else
+      #include <sys/timeb.h>
+      #define K 1
+      #define tv_frac millitm
+      #define tv_sec time
+      #define timespec timeb
+      #define get_time(x) ftime(x)
+    #endif
+  #endif
+
+  #define timerStart(msecs) struct timespec stop, tmp; get_time(&stop), \
+      stop.tv_frac += (msecs%k)*K, \
+      stop.tv_sec  += msecs/k + stop.tv_frac/(K*k), \
+      stop.tv_frac %= K*k
+  #define timerRunning() (get_time(&tmp), \
+      (tmp.tv_sec < stop.tv_sec || tmp.tv_frac < stop.tv_frac))
 #endif
 
 int main(int n, char const * arg[])
@@ -74,9 +99,12 @@ int main(int n, char const * arg[])
       &error,                         /* To report any error during creation. */
       &io_spec, &q_spec, &runtime_spec);
 
+#define RAND ((rand()*(1./RAND_MAX)-.5)*1)
+#define DURATION_MSECS 125
+#define NUM_ATTEMPTS 8
+
   if (!error) {                         /* If all is well, run the resampler: */
     engine = soxr_engine(soxr);
-#define RAND ((rand()*(1./RAND_MAX)-.5)*1)
     switch (itype & 3) {
       case 0: for (i=0;i<ilen*chans; ((float   *)ibuf)[i]=(float  )RAND, ++i); break;
       case 1: for (i=0;i<ilen*chans; ((double  *)ibuf)[i]=(double )RAND, ++i); break;
@@ -84,11 +112,9 @@ int main(int n, char const * arg[])
       case 3: for (i=0;i<ilen*chans; ((int16_t *)ibuf)[i]=rint16(    1.*32768*RAND), ++i); break;
     }
                                                        /* Resample in blocks: */
-    for (i=0; i<8; ++i) {
+    for (i=0; i<NUM_ATTEMPTS; ++i) {
       size_t itotal = 0, ototal = 0;
-      timerDecl;
-#define MSECS 125
-      timerStart(MSECS);
+      timerStart(DURATION_MSECS);
       do {
         size_t const ilen1 = odone < olen? ilen : 0;
         error = soxr_process(soxr, ibuf, ilen1, NULL, obuf, olen, &odone);
@@ -103,9 +129,9 @@ int main(int n, char const * arg[])
   soxr_delete(soxr);
   free(obuf), free(ibuf);
                                                               /* Diagnostics: */
-  fprintf(stderr, "%-26s %s; %lu clips; I/O: %s (%s) %.2fMs/s\n",
+  fprintf(stderr, "%-26s %s; %lu clips; I/O: %s (%s) %.2f Ms/s\n",
       arg0, soxr_strerror(error), (long unsigned)clips,
       ferror(stdin) || ferror(stdout)? strerror(errno) : "no error", engine,
-      1e-6*k/MSECS*chans*(double)omax);
+      1e-6 * k / DURATION_MSECS * chans * (double)omax);
   return !!error;
 }

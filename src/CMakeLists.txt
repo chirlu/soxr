@@ -35,7 +35,7 @@ elseif (WITH_CR32S)
   set (RDFT32S fft4g32s fft4g32)
 endif ()
 
-set (SOURCES ${PROJECT_NAME}.c constructors data-io)
+set (SOURCES ${PROJECT_NAME}.c data-io)
 
 if (WITH_CR32 OR WITH_CR32S OR WITH_CR64 OR WITH_CR64S)
   list (APPEND SOURCES dbesi0 filter fft4g64 cr.c)
@@ -54,7 +54,7 @@ if (WITH_VR32)
 endif ()
 
 if (WITH_CR32S)
-  foreach (source cr32s ${RDFT32S} simd32)
+  foreach (source cr32s ${RDFT32S} util32s)
     list (APPEND SOURCES ${source})
     set_property (SOURCE ${source}
         APPEND_STRING PROPERTY COMPILE_FLAGS ${SIMD32_C_FLAGS})
@@ -62,7 +62,7 @@ if (WITH_CR32S)
 endif ()
 
 if (WITH_CR64S)
-  foreach (source cr64s pffft64s simd64)
+  foreach (source cr64s pffft64s util64s)
     list (APPEND SOURCES ${source})
     set_property (SOURCE ${source}
         APPEND_STRING PROPERTY COMPILE_FLAGS ${SIMD64_C_FLAGS})
@@ -97,7 +97,7 @@ if (WITH_LSR_BINDINGS)
   set (LSR ${PROJECT_NAME}-lsr)
   set (LSR_SO_VERSION 0.1.9)
   set (LSR_SO_VERSION_MAJOR 0)
-  add_library (${LSR} ${LIB_TYPE} lsr)
+  add_library (${LSR} ${LIB_TYPE} ${LSR})
   target_link_libraries (${LSR} ${PROJECT_NAME})
   set_target_properties (${LSR} PROPERTIES
     VERSION "${LSR_SO_VERSION}"

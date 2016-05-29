@@ -151,7 +151,7 @@ typedef __m128 v4sf;
 #  define VALIGNED(ptr) ((((long)(ptr)) & 0xF) == 0)
 
 #else
-#include "avx.h"
+#include "pffft-avx.h"
 #endif
 
 /*

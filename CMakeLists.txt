@@ -16,11 +16,10 @@ set (PROJECT_VERSION_MINOR 1)
 set (PROJECT_VERSION_PATCH 2)
 
 # For shared-object; if, since the last public release:
-#
-#  1) library code changed at all: ++revision
-#  2) interfaces changed at all:   ++current, revision = 0
-#  3) interfaces added:            ++age
-#  4) interfaces removed:          age = 0
+#   1) library code changed at all: ++revision
+#   2) interfaces changed at all:   ++current, revision = 0
+#   3) interfaces added:            ++age
+#   4) interfaces removed:          age = 0
 
 set (SO_VERSION_CURRENT  1)
 set (SO_VERSION_REVISION 1)
@@ -97,15 +96,20 @@ if (NEED_LIBM)
   set (LIBM_LIBRARIES m)
 endif ()
 
+if (${BUILD_EXAMPLES})
+  project (${PROJECT_NAME}) # Adds c++ compiler
+endif ()
+
 if (WITH_OPENMP)
   find_package (OpenMP)
-  if (OpenMP_FOUND)
+  if (OPENMP_FOUND)
     set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-    set (CMAKE_EXE_LINKER_FLAGS
-        "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-    set (CMAKE_SHARED_LINKER_FLAGS
-        "${CMAKE_SHARED_LINKER_FLAGS} ${OpenMP_SHARED_LINKER_FLAGS}")
-  endif ()
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+    if (MINGW) # Is this still needed?
+      set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_C_FLAGS}")
+      set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${OpenMP_C_FLAGS}")
+    endif ()
+  endif()
 endif ()
 
 if (WITH_CR32S)
@@ -145,15 +149,14 @@ test_big_endian (HAVE_BIGENDIAN)
 # Compiler configuration:
 
 if (CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
-  set (PROJECT_CXX_FLAGS "${PROJECT_CXX_FLAGS} -Wconversion -Wall -Wextra")
-  set (PROJECT_CXX_FLAGS "${PROJECT_CXX_FLAGS} -pedantic -Wundef -Wpointer-arith")
-  set (PROJECT_CXX_FLAGS "${PROJECT_CXX_FLAGS} -Wno-long-long -Wno-keyword-macro")
+  set (PROJECT_CXX_FLAGS "${PROJECT_CXX_FLAGS} -Wconversion -Wall -Wextra \
+      -pedantic -Wundef -Wpointer-arith -Wno-long-long -Wno-keyword-macro")
   if (WITH_DEV_GPROF)
     set (PROJECT_CXX_FLAGS "${PROJECT_CXX_FLAGS} -pg")
   endif ()
   # Can use std=c89, but gnu89 should give faster sinf, cosf, etc.:
-  set (PROJECT_C_FLAGS "${PROJECT_CXX_FLAGS} -std=gnu89 -Wnested-externs")
-  set (PROJECT_C_FLAGS "${PROJECT_C_FLAGS} -Wmissing-prototypes -Wstrict-prototypes")
+  set (PROJECT_C_FLAGS "${PROJECT_CXX_FLAGS} \
+       -std=gnu89 -Wnested-externs -Wmissing-prototypes -Wstrict-prototypes")
   if (CMAKE_BUILD_TYPE STREQUAL "Release")
     set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -s") # strip
   endif ()
@@ -206,6 +209,10 @@ if (BUILD_SHARED_LIBS)
   if (MSVC)
     add_definitions (-DSOXR_DLL)
   endif ()
+endif ()
+
+if (CMAKE_BUILD_TYPE STREQUAL "None") # As used by some distros.
+  add_definitions (-DNDEBUG)
 endif ()
 
 
@@ -277,24 +284,21 @@ endif ()
 
 
 
-# Rough-and-ready distclean for anyone still doing in-tree builds:
+# GNU Autotools compatibility; 'make check':
+
+add_custom_target (check COMMAND ${CMAKE_CTEST_COMMAND})
+
+
+
+# GNU Autotools compatibility; 'make distclean':
 
 if (UNIX)
-  add_custom_target (distclean
-    COMMAND make clean && rm -rf
-      CMakeCache.txt
-      CMakeFiles
-      cmake_install.cmake
-      CPackConfig.cmake
-      CPackSourceConfig.cmake
-      deinstall.cmake
-      Makefile
-      soxr-config.h
-      src/CMakeFiles
-      src/cmake_install.cmake
-      src/libsoxr-lsr.pc
-      src/libsoxr.pc
-      src/Makefile)
+  add_custom_target (distclean COMMAND make clean && find .
+      \\! -path \\*/Modules/\\* \\! -name cmp-test.cmake -a -name \\*.cmake
+      -o -name CMakeFiles -o -name Makefile -o -name CMakeCache.txt -o -name
+      Testing -o -name cmake_install.cmake -o -name install_manifest.txt -o
+      -path ./soxr-config.h -o -name config.h -o -name \\*.pc -o -name \\*.s32
+      | xargs rm -rf)
 endif ()
 
 
@@ -317,13 +321,8 @@ if (UNIX)
   set (CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
   set (CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
   set (CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
-
-  set (CPACK_SOURCE_GENERATOR "TGZ")
-  set (CPACK_SOURCE_IGNORE_FILES "dist;/lsr-tests/;/Debug/;/Release/;/cpack/;\\\\.swp$;\\\\.gitignore;/\\\\.git/")
-
+  set (CPACK_SOURCE_GENERATOR "TGZ") # Use TXZ (cmake 3.1) after 17-12-16
+  set (CPACK_SOURCE_IGNORE_FILES
+      "dist;/lsr-tests/;/Debug.*/;/Release.*/;\\\\.swp$;\\\\.git.*;/\\\\.git/")
   include (CPack)
-
-  if (IS_DIRECTORY ${PROJECT_SOURCE_DIR}/cpack)
-    add_subdirectory (cpack)
-  endif ()
 endif ()
