@@ -1,4 +1,8 @@
 #!/bin/sh
 set -e
 
-for n in `seq 0 3`; do ./throughput 44.1 48 1 0 $n; done
+test -r throughput.exe && wine=wine
+
+test /$1 = / && list="`seq 0 3`" || list="$*"
+
+for n in $list; do $wine ./throughput 44.1 48 1 0 $n 4; done

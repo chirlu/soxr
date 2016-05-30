@@ -150,7 +150,10 @@ test_big_endian (HAVE_BIGENDIAN)
 
 if (CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
   set (PROJECT_CXX_FLAGS "${PROJECT_CXX_FLAGS} -Wconversion -Wall -Wextra \
-      -pedantic -Wundef -Wpointer-arith -Wno-long-long -Wno-keyword-macro")
+      -pedantic -Wundef -Wpointer-arith -Wno-long-long")
+  if (CMAKE_C_COMPILER_ID STREQUAL "Clang")
+    set (PROJECT_CXX_FLAGS "${PROJECT_CXX_FLAGS} -Wno-keyword-macro")
+  endif ()
   if (WITH_DEV_GPROF)
     set (PROJECT_CXX_FLAGS "${PROJECT_CXX_FLAGS} -pg")
   endif ()

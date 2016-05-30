@@ -372,6 +372,8 @@ soxr_t soxr_create(
   if (!error && !(p = calloc(sizeof(*p), 1))) error = "malloc failed";
 
   if (p) {
+    control_block_t * control_block;
+
     p->q_spec = q_spec? *q_spec : soxr_quality_spec(SOXR_HQ, 0);
 
     if (q_spec) { /* Backwards compatibility with original API: */
@@ -415,14 +417,14 @@ soxr_t soxr_create(
         ) {
       p->deinterleave = (deinterleave_t)_soxr_deinterleave_f;
       p->interleave = (interleave_t)_soxr_interleave_f;
-      memcpy(&p->control_block,
+      control_block =
 #if WITH_VR32
           ((!WITH_CR32 && !WITH_CR32S) || (p->q_spec.flags & SOXR_VR))? &_soxr_vr32_cb :
 #endif
 #if WITH_CR32S
           !WITH_CR32 || should_use_simd32()? &_soxr_rate32s_cb :
 #endif
-          &_soxr_rate32_cb, sizeof(p->control_block));
+          &_soxr_rate32_cb;
     }
 #if WITH_CR64 || WITH_CR64S
     else
@@ -432,13 +434,14 @@ soxr_t soxr_create(
     {
       p->deinterleave = (deinterleave_t)_soxr_deinterleave;
       p->interleave = (interleave_t)_soxr_interleave;
-      memcpy(&p->control_block,
+      control_block =
 #if WITH_CR64S
           !WITH_CR64 || should_use_simd64()? &_soxr_rate64s_cb :
 #endif
-          &_soxr_rate64_cb, sizeof(p->control_block));
+          &_soxr_rate64_cb;
     }
 #endif
+    memcpy(&p->control_block, control_block, sizeof(p->control_block));
 
     if (p->num_channels && io_ratio!=0)
       error = soxr_set_io_ratio(p, io_ratio, 0);

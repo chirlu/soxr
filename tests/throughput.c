@@ -85,7 +85,9 @@ int main(int n, char const * arg[])
   size_t odone = 0, clips = 0, omax = 0, i;
   soxr_error_t error;
   soxr_t soxr;
-
+  int32_t seed = 0;
+  char const * e = getenv("SOXR_THROUGHPUT_GAIN");
+  double gain = e? atof(e) : .5;
 
   /* Overrides (if given): */
   if (passband_end   > 0) q_spec.passband_end   = passband_end / 100;
@@ -99,7 +101,9 @@ int main(int n, char const * arg[])
       &error,                         /* To report any error during creation. */
       &io_spec, &q_spec, &runtime_spec);
 
-#define RAND ((rand()*(1./RAND_MAX)-.5)*1)
+#define ranqd1(x) ((x) = 1664525 * (x) + 1013904223) /* int32_t x */
+#define dranqd1(x) (ranqd1(x) * (1. / (65536. * 32768.))) /* [-1,1) */
+#define RAND (dranqd1(seed) * gain)
 #define DURATION_MSECS 125
 #define NUM_ATTEMPTS 8
 

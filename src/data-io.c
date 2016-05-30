@@ -1,4 +1,4 @@
-/* SoX Resampler Library      Copyright (c) 2007-13 robs@users.sourceforge.net
+/* SoX Resampler Library      Copyright (c) 2007-16 robs@users.sourceforge.net
  * Licence for this file: LGPL v2.1                  See LICENCE for details. */
 
 #include <limits.h>
@@ -14,8 +14,8 @@
   unsigned i; \
   size_t j; \
   T const * src = *src0; \
-  if (ch > 1) \
-    for (j = 0; j < n; ++j) for (i = 0; i < ch; ++i) dest[i][j] = (DEINTERLEAVE_TO)*src++; \
+  if (ch > 1) for (j = 0; j < n; ++j) \
+    for (i = 0; i < ch; ++i) dest[i][j] = (DEINTERLEAVE_TO)*src++; \
   else if (flag) memcpy(dest[0], src, n * sizeof(T)), src = &src[n]; \
   else for (j = 0; j < n; dest[0][j++] = (DEINTERLEAVE_TO)*src++); \
   *src0 = src; \
@@ -60,35 +60,6 @@ void _soxr_deinterleave_f(float * * dest, /* Round/clipping not needed here */
 
 #include "rint.h"
 
-#if HAVE_FENV_H
-  #include <fenv.h>
-  #define fe_test_invalid() fetestexcept(FE_INVALID)
-  #define fe_clear_invalid() feclearexcept(FE_INVALID)
-#elif defined _MSC_VER
-  #define FE_INVALID 1
-  #if defined _WIN64
-    #include <float.h>
-    #define fe_test_invalid() (_statusfp() & _SW_INVALID)
-    #define fe_clear_invalid _clearfp /* FIXME clears all */
-  #else
-  static __inline int fe_test_invalid()
-  {
-    short status_word;
-    __asm fnstsw status_word
-    return status_word & FE_INVALID;
-  }
-
-  static __inline int fe_clear_invalid()
-  {
-    int16_t status[14];
-    __asm fnstenv status
-    status[2] &= ~FE_INVALID;
-    __asm fldenv status
-    return 0;
-  }
-  #endif
-#endif
-
 
 
 #if defined FE_INVALID && defined FPU_RINT32 && defined __STDC_VERSION__
@@ -103,7 +74,7 @@ void _soxr_deinterleave_f(float * * dest, /* Round/clipping not needed here */
 #define LSX_RINT_CLIP_2 lsx_rint32_clip_2
 #define LSX_RINT_CLIP lsx_rint32_clip
 #define RINT_CLIP rint32_clip
-#define RINT rint32
+#define RINT rint32D
 #if defined FPU_RINT32
   #define FPU_RINT
 #endif
@@ -114,7 +85,7 @@ void _soxr_deinterleave_f(float * * dest, /* Round/clipping not needed here */
 #define LSX_RINT_CLIP_2 lsx_rint16_clip_2
 #define LSX_RINT_CLIP lsx_rint16_clip
 #define RINT_CLIP rint16_clip
-#define RINT rint16
+#define RINT rint16D
 #if defined FPU_RINT16
   #define FPU_RINT
 #endif
@@ -125,7 +96,7 @@ void _soxr_deinterleave_f(float * * dest, /* Round/clipping not needed here */
 #define LSX_RINT_CLIP_2 lsx_rint16_clip_2_dither
 #define LSX_RINT_CLIP lsx_rint16_clip_dither
 #define RINT_CLIP rint16_clip_dither
-#define RINT rint16
+#define RINT rint16D
 #if defined FPU_RINT16
   #define FPU_RINT
 #endif
@@ -145,7 +116,7 @@ void _soxr_deinterleave_f(float * * dest, /* Round/clipping not needed here */
 #define LSX_RINT_CLIP_2 lsx_rint32_clip_2_f
 #define LSX_RINT_CLIP lsx_rint32_clip_f
 #define RINT_CLIP rint32_clip_f
-#define RINT rint32
+#define RINT rint32F
 #if defined FPU_RINT32
   #define FPU_RINT
 #endif
@@ -156,7 +127,7 @@ void _soxr_deinterleave_f(float * * dest, /* Round/clipping not needed here */
 #define LSX_RINT_CLIP_2 lsx_rint16_clip_2_f
 #define LSX_RINT_CLIP lsx_rint16_clip_f
 #define RINT_CLIP rint16_clip_f
-#define RINT rint16
+#define RINT rint16F
 #if defined FPU_RINT16
   #define FPU_RINT
 #endif
@@ -167,7 +138,7 @@ void _soxr_deinterleave_f(float * * dest, /* Round/clipping not needed here */
 #define LSX_RINT_CLIP_2 lsx_rint16_clip_2_dither_f
 #define LSX_RINT_CLIP lsx_rint16_clip_dither_f
 #define RINT_CLIP rint16_clip_dither_f
-#define RINT rint16
+#define RINT rint16D
 #if defined FPU_RINT16
   #define FPU_RINT
 #endif
