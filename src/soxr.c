@@ -92,10 +92,10 @@ struct soxr {
 
 
 
-#if !WITH_CR32 && !WITH_CR32S && !WITH_CR64 && !WITH_CR64S
-  #define lsx_to_3dB(x) ((x)/(x))
-#else
+#if WITH_CR32 || WITH_CR32S || WITH_CR64 || WITH_CR64S
   #include "filter.h"
+#else
+  #define lsx_to_3dB(x) ((x)/(x))
 #endif
 
 
@@ -193,7 +193,7 @@ soxr_io_spec_t soxr_io_spec(
 
 
 
-#if WITH_CR32S || WITH_CR64S
+#if (WITH_CR32S && WITH_CR32) || (WITH_CR64S && WITH_CR64)
   #if defined __GNUC__ && defined __x86_64__
     #define CPUID(type, eax_, ebx_, ecx_, edx_) \
       __asm__ __volatile__ ( \
@@ -240,7 +240,7 @@ soxr_io_spec_t soxr_io_spec(
 
 
 
-#if WITH_CR32S
+#if WITH_CR32S && WITH_CR32
   static bool cpu_has_simd32(void)
   {
   #if defined __x86_64__ || defined _M_X64
@@ -259,14 +259,17 @@ soxr_io_spec_t soxr_io_spec(
 
   static bool should_use_simd32(void)
   {
-    char const * e = getenv("SOXR_USE_SIMD32");
-    return e? !!atoi(e) : cpu_has_simd32();
+    char const * e;
+    return ((e = getenv("SOXR_USE_SIMD"  )))? !!atoi(e) :
+           ((e = getenv("SOXR_USE_SIMD32")))? !!atoi(e) : cpu_has_simd32();
   }
+#else
+  #define should_use_simd32() true
 #endif
 
 
 
-#if WITH_CR64S
+#if WITH_CR64S && WITH_CR64
   #if defined __GNUC__
     #define XGETBV(type, eax_, edx_) \
       __asm__ __volatile__ ( \
@@ -306,9 +309,12 @@ soxr_io_spec_t soxr_io_spec(
 
   static bool should_use_simd64(void)
   {
-    char const * e = getenv("SOXR_USE_SIMD64");
-    return e? !!atoi(e) : cpu_has_simd64();
+    char const * e;
+    return ((e = getenv("SOXR_USE_SIMD"  )))? !!atoi(e) :
+           ((e = getenv("SOXR_USE_SIMD64")))? !!atoi(e) : cpu_has_simd64();
   }
+#else
+  #define should_use_simd64() true
 #endif
 
 
@@ -322,7 +328,8 @@ extern control_block_t
 
 
 
-static void runtime_num(char const * env_name, int min, int max, unsigned * field)
+static void runtime_num(char const * env_name,
+    int min, int max, unsigned * field)
 {
   char const * e = getenv(env_name);
   if (e) {
@@ -334,7 +341,8 @@ static void runtime_num(char const * env_name, int min, int max, unsigned * fiel
 
 
 
-static void runtime_flag(char const * env_name, unsigned n_bits, unsigned n_shift, unsigned long * flags)
+static void runtime_flag(char const * env_name,
+    unsigned n_bits, unsigned n_shift, unsigned long * flags)
 {
   char const * e = getenv(env_name);
   if (e) {
@@ -355,14 +363,28 @@ soxr_t soxr_create(
   soxr_quality_spec_t const * q_spec,
   soxr_runtime_spec_t const * runtime_spec)
 {
-  double io_ratio = output_rate!=0? input_rate!=0? input_rate / output_rate : -1 : input_rate!=0? -1 : 0;
+  double io_ratio = output_rate!=0? input_rate!=0?
+    input_rate / output_rate : -1 : input_rate!=0? -1 : 0;
   static const float datatype_full_scale[] = {1, 1, 65536.*32768, 32768};
   soxr_t p = 0;
   soxr_error_t error = 0;
 
 #if WITH_DEV_TRACE
+#define _(x) (char)(sizeof(x)>=10? 'a'+(char)(sizeof(x)-10):'0'+(char)sizeof(x))
   char const * e = getenv("SOXR_TRACE");
   _soxr_trace_level = e? atoi(e) : 0;
+  {
+    char const arch[] = {_(char), _(short), _(int), _(long), _(long long)
+      , ' ', _(float), _(double), _(long double)
+      , ' ', _(int *), _(int (*)(int))
+      , ' ', HAVE_BIGENDIAN ? 'B' : 'L'
+#if defined _OPENMP
+      , ' ', 'O', 'M', 'P'
+#endif
+      , 0};
+#undef _
+    lsx_debug("arch: %s", arch);
+  }
 #endif
 
   if (q_spec && q_spec->e)  error = q_spec->e;

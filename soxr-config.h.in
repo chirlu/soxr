@@ -6,6 +6,7 @@
 
 #cmakedefine01 AVCODEC_FOUND
 #cmakedefine01 AVUTIL_FOUND
+#cmakedefine01 WITH_PFFFT
 
 #cmakedefine01 HAVE_FENV_H
 #cmakedefine01 HAVE_STDBOOL_H
@@ -19,6 +20,8 @@
 #cmakedefine01 WITH_CR64S
 #cmakedefine01 WITH_VR32
 
+#cmakedefine01 WITH_HI_PREC_CLOCK
+#cmakedefine01 WITH_FLOAT_STD_PREC_CLOCK
 #cmakedefine01 WITH_DEV_TRACE
 
 #endif

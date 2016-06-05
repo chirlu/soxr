@@ -343,7 +343,7 @@ STATIC char const * _soxr_init(
   for (i = 0; i < p->num_stages; ++i) {
     p->stages[i].num = i;
     p->stages[i].shared = shared;
-    p->stages[i].input_size = 4096;
+    p->stages[i].input_size = 8192;
   }
   p->stages[0].is_input = true;
 
@@ -443,8 +443,8 @@ STATIC char const * _soxr_init(
     s->L = arbL;
     s->use_hi_prec_clock =
       mode>1 && (q_spec->flags & SOXR_HI_PREC_CLOCK) && !rational;
-#if FLOAT_HI_PREC_CLOCK
-    if (s->use_hi_prec_clock) {
+#if WITH_FLOAT_STD_PREC_CLOCK
+    if (order && !s->use_hi_prec_clock) {
       s->at.flt = at;
       s->step.flt = arbM;
       s->out_in_ratio = (double)(arbL / s->step.flt);
@@ -452,7 +452,7 @@ STATIC char const * _soxr_init(
 #endif
     {
       s->at.whole = (int64_t)(at * MULT32 + .5);
-#if !FLOAT_HI_PREC_CLOCK
+#if WITH_HI_PREC_CLOCK
       if (s->use_hi_prec_clock) {
         double M = arbM * MULT32;
         s->at.fix.ls.parts.ms = 0x80000000ul;
@@ -474,7 +474,7 @@ STATIC char const * _soxr_init(
         s++, postL, postM, &multiplier, r_spec->log2_min_dft_size,
         r_spec->log2_large_dft_size, core_flags, core->rdft_cb);
 
-  lsx_debug("%g: »%i⋅%i/%i⋅%i/%g⋅%i/%i %x", 1/io_ratio,
+  lsx_debug("%g: >>%i %i/%i %i/%g %i/%i (%x)", 1/io_ratio,
       shr, preL, preM, arbL, arbM, postL, postM, core_flags);
 
   for (i = 0, s = p->stages; i < p->num_stages; ++i, ++s) {

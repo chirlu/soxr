@@ -16,23 +16,23 @@
   #define timerRunning() (QueryPerformanceCounter(&tmp), \
       (tmp.QuadPart-start.QuadPart < stop.QuadPart))
 #else
-  #include <time.h>
-  #include <unistd.h>
-  #if defined _POSIX_TIMERS && _POSIX_TIMERS > 0
-    #define K (k*k)
-    #define tv_frac tv_nsec
-    #if defined _POSIX_MONOTONIC_CLOCK
-      #define get_time(x) clock_gettime(CLOCK_MONOTONIC, x)
-    #else
-      #define get_time(x) clock_gettime(CLOCK_REALTIME, x)
-    #endif
+  #include <sys/time.h>
+  #if defined timeradd
+    #define K k
+    #define tv_frac tv_usec
+    #define timespec timeval
+    #define get_time(x) gettimeofday(x, NULL)
   #else
-    #include <sys/time.h>
-    #if defined timeradd
-      #define K k
-      #define tv_frac tv_usec
-      #define timespec timeval
-      #define get_time(x) gettimeofday(x, NULL)
+    #include <time.h>
+    #include <unistd.h>
+    #if defined _POSIX_TIMERS && _POSIX_TIMERS > 0
+      #define K (k*k)
+      #define tv_frac tv_nsec
+      #if defined _POSIX_MONOTONIC_CLOCK
+        #define get_time(x) clock_gettime(CLOCK_MONOTONIC, x)
+      #else
+        #define get_time(x) clock_gettime(CLOCK_REALTIME, x)
+      #endif
     #else
       #include <sys/timeb.h>
       #define K 1

@@ -10,7 +10,12 @@
 typedef void real; /* float or double */
 struct stage;
 typedef void (* stage_fn_t)(struct stage * input, fifo_t * output);
-typedef struct half_fir_info {int num_coefs; real const * coefs; stage_fn_t fn, dfn; float att;} half_fir_info_t;
+typedef struct half_fir_info {
+  int num_coefs;
+  real const * coefs;
+  stage_fn_t fn, dfn;
+  float att;
+} half_fir_info_t;
 typedef struct {float scalar; stage_fn_t fn;} poly_fir1_t;
 typedef struct {float beta; poly_fir1_t interp[3];} poly_fir_t;
 
@@ -48,9 +53,6 @@ typedef union { /* Uint64 in parts */
   uint64_t all;
 } uint64p_t;
 
-#define FLOAT_HI_PREC_CLOCK 0    /* Non-float hi-prec has ~96 bits. */
-#define float_step_t long double /* __float128 is also a (slow) option */
-
 typedef struct {
   int        dft_length, num_taps, post_peak;
   void       * dft_forward_setup, * dft_backward_setup;
@@ -62,10 +64,16 @@ typedef struct { /* So generated filter coefs may be shared between channels */
   dft_filter_t dft_filter[2];
 } rate_shared_t;
 
+typedef double float_step_t; /* Or long double or __float128. */
+
 typedef union { /* Fixed point arithmetic */
-  struct {uint64p_t ls; int64p_t ms;} fix;
+  struct {uint64p_t ls; int64p_t ms;} fix;  /* Hi-prec has ~96 bits. */
   float_step_t flt;
 } step_t;
+
+#define integer  fix.ms.parts.ms
+#define fraction fix.ms.parts.ls
+#define whole    fix.ms.all
 
 #define CORE_DBL       1
 #define CORE_SIMD_POLY 2
@@ -113,15 +121,10 @@ typedef struct stage {
 
 #define stage_occupancy(s) max(0, fifo_occupancy(&(s)->fifo) - (s)->pre_post)
 #define stage_read_p(s) ((sample_t *)fifo_read_ptr(&(s)->fifo) + (s)->pre)
-#define integer  fix.ms.parts.ms
-#define fraction fix.ms.parts.ls
-#define whole    fix.ms.all
-
 
 #define lq_bw0  (1385/2048.) /* ~.67625, FP exact. */
 
 typedef enum {rolloff_small, rolloff_medium, rolloff_none} rolloff_t;
-
 
 typedef struct {
   void * (* alloc)(size_t);

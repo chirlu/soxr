@@ -55,6 +55,7 @@
 
 #define SOXR_ROLLOFF_LSR2Q     3u    /* Reserved for internal use. */
 #define SOXR_ROLLOFF_MASK      3u    /* For masking these bits. */
+#define SOXR_MAINTAIN_3DB_PT   4u    /* Reserved for internal use. */
 #define SOXR_PROMOTE_TO_LQ    64u    /* Reserved for internal use. */
 
 

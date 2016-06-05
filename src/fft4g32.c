@@ -5,8 +5,10 @@
 #include "filter.h"
 #define FFT4G_FLOAT
 #include "fft4g.c"
-#include "rdft_t.h"
+#include "soxr-config.h"
 
+#if WITH_CR32
+#include "rdft_t.h"
 static void * null(void) {return 0;}
 static void forward (int length, void * setup, double * H) {lsx_safe_rdft_f(length,  1, H); (void)setup;}
 static void backward(int length, void * setup, double * H) {lsx_safe_rdft_f(length, -1, H); (void)setup;}
@@ -31,3 +33,4 @@ fn_t _soxr_rdft32_cb[] = {
   (fn_t)free,
   (fn_t)flags,
 };
+#endif

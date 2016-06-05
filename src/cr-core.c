@@ -139,7 +139,8 @@ static half_fir_info_t const half_firs[] = {
   #define SIMD_AVX ((CORE_TYPE & CORE_SIMD_POLY) && defined __AVX__)
   #define SIMD_SSE 0
 #else
-  #define SIMD_SSE ((CORE_TYPE & CORE_SIMD_POLY) && (defined __x86_64__ || defined _M_X64 || defined i386 || defined _M_IX86))
+  #define SIMD_SSE ((CORE_TYPE & CORE_SIMD_POLY) && \
+      (defined __x86_64__ || defined _M_X64 || defined i386 || defined _M_IX86))
   #define SIMD_AVX 0
 #endif
 
@@ -147,8 +148,6 @@ static half_fir_info_t const half_firs[] = {
 
 
 
-
-#define HI_PREC_CLOCK
 #define COEFS (sample_t * __restrict)p->shared->poly_fir_coefs
 #define VAR_LENGTH p->n
 #define VAR_CONVOLVE(n) while (j < (n)) _

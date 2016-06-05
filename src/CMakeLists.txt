@@ -32,13 +32,16 @@ elseif (WITH_PFFFT)
   #set (RDFT32 pffft32)
   set (RDFT32S pffft32s)
 elseif (WITH_CR32S)
-  set (RDFT32S fft4g32s fft4g32)
+  set (RDFT32S fft4g32s)
+  if (NOT WITH_CR32)
+    list (APPEND RDFT32S fft4g32)
+  endif ()
 endif ()
 
 set (SOURCES ${PROJECT_NAME}.c data-io)
 
 if (WITH_CR32 OR WITH_CR32S OR WITH_CR64 OR WITH_CR64S)
-  list (APPEND SOURCES dbesi0 filter fft4g64 cr.c)
+  list (APPEND SOURCES dbesi0 filter fft4g64 cr)
 endif ()
 
 if (WITH_CR32)

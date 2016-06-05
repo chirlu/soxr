@@ -13,7 +13,7 @@ set (DESCRIPTION_SUMMARY
 
 set (PROJECT_VERSION_MAJOR 0)
 set (PROJECT_VERSION_MINOR 1)
-set (PROJECT_VERSION_PATCH 2)
+set (PROJECT_VERSION_PATCH "3b1")
 
 # For shared-object; if, since the last public release:
 #   1) library code changed at all: ++revision
@@ -22,7 +22,7 @@ set (PROJECT_VERSION_PATCH 2)
 #   4) interfaces removed:          age = 0
 
 set (SO_VERSION_CURRENT  1)
-set (SO_VERSION_REVISION 1)
+set (SO_VERSION_REVISION 2)
 set (SO_VERSION_AGE      1)
 
 math (EXPR SO_VERSION_MAJOR "${SO_VERSION_CURRENT} - ${SO_VERSION_AGE}")
@@ -63,18 +63,22 @@ cmake_dependent_option (WITH_CR64S
 cmake_dependent_option (WITH_CR32S
   "Include HQ SIMD constant-rate resampling engine." ON
   "WITH_VR32 OR WITH_CR64 OR WITH_CR32 OR WITH_CR64S" ON)
-cmake_dependent_option (WITH_AVFFT
-  "Use libavcodec (LGPL) for HQ SIMD DFT." OFF
-  "WITH_CR32S;NOT WITH_PFFFT" OFF)
 cmake_dependent_option (WITH_PFFFT
   "Use PFFFT (BSD-like licence) for HQ SIMD DFT." ON
   "WITH_CR32S;NOT WITH_AVFFT" OFF)
+cmake_dependent_option (WITH_AVFFT
+  "Use libavcodec (LGPL) for HQ SIMD DFT." OFF
+  "WITH_CR32S;NOT WITH_PFFFT" OFF)
 cmake_dependent_option (BUILD_LSR_TESTS "Build LSR tests." OFF
   "UNIX;NOT CMAKE_CROSSCOMPILING;EXISTS ${PROJECT_SOURCE_DIR}/lsr-tests;WITH_LSR_BINDINGS" OFF)
 
+option (WITH_HI_PREC_CLOCK "Enable high-precision time-base." ON)
+option (WITH_FLOAT_STD_PREC_CLOCK
+	"Use floating-point for standard-precision time-base." OFF)
 option (WITH_DEV_TRACE "Enable developer trace capability." ON)
 option (WITH_DEV_GPROF "Enable developer grpof output." OFF)
-mark_as_advanced (WITH_DEV_TRACE WITH_DEV_GPROF)
+mark_as_advanced (WITH_HI_PREC_CLOCK WITH_FLOAT_STD_PREC_CLOCK
+       	WITH_DEV_TRACE WITH_DEV_GPROF)
 
 
 
@@ -130,7 +134,7 @@ if (WITH_AVFFT)
   endif ()
 endif ()
 
-if (WITH_AVFFT OR (CMAKE_SYSTEM_PROCESSOR MATCHES "^arm" AND SIMD32_FOUND))
+if (WITH_AVFFT OR (CMAKE_SYSTEM_PROCESSOR MATCHES "^arm" AND SIMD32_FOUND AND WITH_CR32))
   find_package (LibAVUtil)
   if (AVUTIL_FOUND)
     include_directories (${AVUTIL_INCLUDE_DIRS})

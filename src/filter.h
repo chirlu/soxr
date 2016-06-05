@@ -31,7 +31,7 @@ double * lsx_design_lpf(
     double Fn,      /* Nyquist freq; e.g. 0.5, 1, PI; < 0: dummy run */
     double att,     /* Stop-band attenuation in dB */
     int * num_taps, /* 0: value will be estimated */
-    int k,          /* >0: number of phases; <0: num_taps ≡ 1 (mod -k) */
+    int k,          /* >0: number of phases; <0: num_taps = 1 (mod -k) */
     double beta);   /* <0: value will be estimated */
 
 void lsx_fir_to_phase(double * * h, int * len,

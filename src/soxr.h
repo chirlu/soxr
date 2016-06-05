@@ -65,8 +65,8 @@ input or output (e.g. ilen, olen).                                            */
 /* E.g. #if SOXR_THIS_VERSION >= SOXR_VERSION(0,1,1) ...                      */
 
 #define SOXR_VERSION(x,y,z)     (((x)<<16)|((y)<<8)|(z))
-#define SOXR_THIS_VERSION       SOXR_VERSION(0,1,2)
-#define SOXR_THIS_VERSION_STR               "0.1.2"
+#define SOXR_THIS_VERSION       SOXR_VERSION(0,1,3)
+#define SOXR_THIS_VERSION_STR               "0.1.3b1"
 
 
 
@@ -249,7 +249,6 @@ struct soxr_quality_spec {                                       /* Typically */
 #define SOXR_ROLLOFF_MEDIUM    1u    /* <= 0.35 dB */
 #define SOXR_ROLLOFF_NONE      2u    /* For Chebyshev bandwidth. */
 
-#define SOXR_MAINTAIN_3DB_PT   4u  /* Reserved for internal use. */
 #define SOXR_HI_PREC_CLOCK     8u  /* Increase `irrational' ratio accuracy. */
 #define SOXR_DOUBLE_PRECISION 16u  /* Use D.P. calcs even if precision <= 20. */
 #define SOXR_VR               32u  /* Variable-rate resampling. */
@@ -257,12 +256,12 @@ struct soxr_quality_spec {                                       /* Typically */
 
 
 struct soxr_runtime_spec {                                       /* Typically */
-  unsigned log2_min_dft_size;/* For DFT efficiency. [8,15]              10    */
-  unsigned log2_large_dft_size;/* For DFT efficiency. [8,20]            17    */
-  unsigned coef_size_kbytes; /* For SOXR_COEF_INTERP_AUTO (below).      400   */
-  unsigned num_threads;      /* If built so. 0 means `automatic'.        1    */
-  void * e;                  /* Reserved for internal use.               0    */
-  unsigned long flags;       /* Per the following #defines.              0    */
+  unsigned log2_min_dft_size;   /* For DFT efficiency. [8,15]           11    */
+  unsigned log2_large_dft_size; /* For DFT efficiency. [8,20]           17    */
+  unsigned coef_size_kbytes;    /* For SOXR_COEF_INTERP_AUTO (below).   400   */
+  unsigned num_threads;         /* If built so. 0 means `automatic'.     1    */
+  void * e;                     /* Reserved for internal use.            0    */
+  unsigned long flags;          /* Per the following #defines.           0    */
 };
                                    /* For `irrational' ratios only: */
 #define SOXR_COEF_INTERP_AUTO  0u    /* Auto select coef. interpolation. */
@@ -293,7 +292,7 @@ SOXR soxr_quality_spec_t soxr_quality_spec(
 #define SOXR_24_BITQ            5
 #define SOXR_28_BITQ            6
 #define SOXR_32_BITQ            7
-                                    /* For internal use only; to be removed: */
+                                /* Reserved for internal use (to be removed): */
 #define SOXR_LSR0Q              8     /* 'Best sinc'. */
 #define SOXR_LSR1Q              9     /* 'Medium sinc'. */
 #define SOXR_LSR2Q              10    /* 'Fast sinc'. */

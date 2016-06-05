@@ -28,7 +28,7 @@
 #include "fft4g_cache.h"
 #endif
 
-#if WITH_CR32 && !AVCODEC_FOUND
+#if (WITH_CR32 && !AVCODEC_FOUND) || (WITH_CR32S && !AVCODEC_FOUND && !WITH_PFFFT)
 #define DFT_FLOAT float
 #define DONE_WITH_FFT_CACHE done_with_fft_cache_f
 #define FFT_CACHE_CCRW fft_cache_ccrw_f
@@ -93,7 +93,7 @@ double * lsx_make_lpf(
   double * h = malloc((size_t)num_taps * sizeof(*h));
   double mult = scale / lsx_bessel_I_0(beta), mult1 = 1 / (.5 * m + rho);
   assert(Fc >= 0 && Fc <= 1);
-  lsx_debug("make_lpf(n=%i Fc=%.7g β=%g ρ=%g scale=%g)",
+  lsx_debug("make_lpf(n=%i Fc=%.7g beta=%g rho=%g scale=%g)",
       num_taps, Fc, beta, rho, scale);
 
   if (h) for (i = 0; i <= m / 2; ++i) {
@@ -120,7 +120,7 @@ double * lsx_design_lpf(
     double Fn,      /* Nyquist freq; e.g. 0.5, 1, PI */
     double att,     /* Stop-band attenuation in dB */
     int * num_taps, /* 0: value will be estimated */
-    int k,          /* >0: number of phases; <0: num_taps ≡ 1 (mod -k) */
+    int k,          /* >0: number of phases; <0: num_taps = 1 (mod -k) */
     double beta)    /* <0: value will be estimated */
 {
   int n = *num_taps, phases = max(k, 1), modulo = max(-k, 1);

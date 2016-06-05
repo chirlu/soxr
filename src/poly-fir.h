@@ -26,8 +26,6 @@
 
   #define BEGINNING v4_t X = vLds(x), sum = vZero(); \
       v4_t const * const __restrict coefs = (v4_t *)COEFS
-  #define MIDDLE switch (N) {case 3: CONVOLVE(3); break; case 4: CONVOLVE(4); \
-      break; case 5: CONVOLVE(5); break;  default: CONVOLVE(N); }
   #define END vStorSum(output+i, sum)
   #define cc(n) case n: core(n); break
   #define CORE(n) switch (n) {cc(2); cc(3); cc(4); cc(5); cc(6); default: core(n);}
@@ -48,60 +46,74 @@
   #define d (coef(COEFS, COEF_INTERP, N, phase, 3,j))
 
   #define BEGINNING sample_t sum = 0
-  #define MIDDLE CONVOLVE(N)
   #define END output[i] = sum
   #define CORE(n) core(n)
 #endif
 
-#define fphpCore(n) \
-  if (p->use_hi_prec_clock) { \
-    float_step_t at = p->at.flt; \
-    for (i = 0; (int)at < num_in; ++i, at += p->step.flt) { \
-      sample_t const * const __restrict in = input + (int)at; \
-      float_step_t frac = at - (int)at; \
-      int phase = (int)(frac * (1 << PHASE_BITS)); \
-      sample_t x = (sample_t)(frac * (1 << PHASE_BITS) - phase); \
-      int j = 0; \
-      BEGINNING; CONVOLVE(n); END; \
-    } \
-    fifo_read(&p->fifo, (int)at, NULL); \
-    p->at.flt = at - (int)at; \
-  } else
 
-#define hpCore(n) \
-  if (p->use_hi_prec_clock) { \
-    for (i = 0; p->at.integer < num_in; ++i, \
-        p->at.fix.ls.all += p->step.fix.ls.all, \
-        p->at.whole += p->step.whole + (p->at.fix.ls.all < p->step.fix.ls.all)) { \
-      sample_t const * const __restrict in = input + p->at.integer; \
-      uint32_t frac = p->at.fraction; \
-      int phase = (int)(frac >> (32 - PHASE_BITS)); /* high-order bits */ \
-      sample_t x = (sample_t)((frac << PHASE_BITS) * (1 / MULT32)); /* low-order bits, scaled to [0,1) */ \
-      int j = 0; \
-      BEGINNING; CONVOLVE(n); END; \
-    } \
-    fifo_read(&p->fifo, p->at.integer, NULL); \
-    p->at.integer = 0; \
-  } else
 
-#define spCore(n) { \
-    for (i = 0; p->at.integer < num_in; ++i, p->at.whole += p->step.whole) { \
-      sample_t const * const __restrict in = input + p->at.integer; \
-      uint32_t frac = p->at.fraction; \
-      int phase = (int)(frac >> (32 - PHASE_BITS)); /* high-order bits */ \
-      sample_t x = (sample_t)((frac << PHASE_BITS) * (1 / MULT32)); /* low-order bits, scaled to [0,1) */ \
-      int j = 0; \
-      BEGINNING; CONVOLVE(n); END; \
-    } \
-    fifo_read(&p->fifo, p->at.integer, NULL); \
-    p->at.integer = 0; }
+#define floatPrecCore(n) { \
+  float_step_t at = p->at.flt; \
+  for (i = 0; (int)at < num_in; ++i, at += p->step.flt) { \
+    sample_t const * const __restrict in = input + (int)at; \
+    float_step_t frac = at - (int)at; \
+    int phase = (int)(frac * (1 << PHASE_BITS)); \
+    sample_t x = (sample_t)(frac * (1 << PHASE_BITS) - phase); \
+    int j = 0; \
+    BEGINNING; CONVOLVE(n); END; \
+  } \
+  fifo_read(&p->fifo, (int)at, NULL); \
+  p->at.flt = at - (int)at; } /* Could round to 1 in some cirmcumstances. */
 
-#if defined HI_PREC_CLOCK && FLOAT_HI_PREC_CLOCK
-  #define core(n) fphpCore(n) spCore(n)
-#elif defined HI_PREC_CLOCK
-  #define core(n) hpCore(n) spCore(n)
+
+
+#define highPrecCore(n) { \
+  step_t at; at.fix = p->at.fix; \
+  for (i = 0; at.integer < num_in; ++i, \
+      at.fix.ls.all += p->step.fix.ls.all, \
+      at.whole += p->step.whole + (at.fix.ls.all < p->step.fix.ls.all)) { \
+    sample_t const * const __restrict in = input + at.integer; \
+    uint32_t frac = at.fraction; \
+    int phase = (int)(frac >> (32 - PHASE_BITS)); /* High-order bits */ \
+    /* Low-order bits, scaled to [0,1): */ \
+    sample_t x = (sample_t)((frac << PHASE_BITS) * (1 / MULT32)); \
+    int j = 0; \
+    BEGINNING; CONVOLVE(n); END; \
+  } \
+  fifo_read(&p->fifo, at.integer, NULL); \
+  p->at.whole = at.fraction; \
+  p->at.fix.ls = at.fix.ls; }
+
+
+
+#define stdPrecCore(n) { \
+  int64p_t at; at.all = p->at.whole; \
+  for (i = 0; at.parts.ms < num_in; ++i, at.all += p->step.whole) { \
+    sample_t const * const __restrict in = input + at.parts.ms; \
+    uint32_t const frac = at.parts.ls; \
+    int phase = (int)(frac >> (32 - PHASE_BITS)); /* high-order bits */ \
+    /* Low-order bits, scaled to [0,1): */ \
+    sample_t x = (sample_t)((frac << PHASE_BITS) * (1 / MULT32)); \
+    int j = 0; \
+    BEGINNING; CONVOLVE(n); END; \
+  } \
+  fifo_read(&p->fifo, at.parts.ms, NULL); \
+  p->at.whole = at.parts.ls; }
+
+
+
+#if WITH_FLOAT_STD_PREC_CLOCK
+  #define SPCORE floatPrecCore
 #else
-  #define core(n) spCore(n)
+  #define SPCORE stdPrecCore
+#endif
+
+
+
+#if WITH_HI_PREC_CLOCK
+  #define core(n) if (p->use_hi_prec_clock) highPrecCore(n) else SPCORE(n)
+#else
+  #define core(n) SPCORE(n)
 #endif
 
 
@@ -131,7 +143,6 @@ static void FUNCTION(stage_t * p, fifo_t * output_fifo)
 #undef COEF_INTERP
 #undef N
 #undef BEGINNING
-#undef MIDDLE
 #undef END
 #undef CONVOLVE
 #undef FIR_LENGTH

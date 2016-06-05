@@ -6,6 +6,9 @@
 
 #include "std-types.h"
 
+/* For x86, compiler-supplied versions of these functions (where available)
+ * can have poor performance (e.g. mingw32), so prefer these asm versions: */
+
 #if defined __GNUC__ && (defined __i386__ || defined __x86_64__)
   #define FPU_RINT32
   #define FPU_RINT16
@@ -23,7 +26,7 @@
     int32_t status[7];
     __asm__ __volatile__("fnstenv %0": "=m"(status));
     status[1] &= ~FE_INVALID;
-    __asm__ __volatile__("fldenv %0": : "m"(status));
+    __asm__ __volatile__("fldenv %0": : "m"(*status));
     return 0;
   }
 #elif defined _MSC_VER && defined _M_IX86
@@ -69,7 +72,7 @@
   #define rint16F(y,x) rint16d(&(y),(double)(x))
   #define FE_INVALID 1
   #define fe_test_invalid() (_statusfp() & _SW_INVALID)
-  #define fe_clear_invalid _clearfp /* Note: clears all */
+  #define fe_clear_invalid _clearfp /* Note: clears all. */
 #elif HAVE_LRINT && LONG_MAX == 2147483647L && HAVE_FENV_H
   #include <math.h>
   #include <fenv.h>

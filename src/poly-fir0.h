@@ -22,9 +22,8 @@
 #endif
 
 #define core(n) \
-  for (i = 0; p->at.integer < num_in * p->L; ++i, \
-      p->at.integer += p->step.integer) { \
-    int const div = p->at.integer / p->L, rem = p->at.integer % p->L; \
+  for (i = 0; at < num_in * p->L; ++i, at += step) { \
+    int const div = at / p->L, rem = at % p->L; \
     sample_t const * const __restrict at = input + div; \
     int j = 0; BEGINNING; CONVOLVE(n); END;}
 
@@ -33,13 +32,14 @@ static void FUNCTION(stage_t * p, fifo_t * output_fifo)
   int num_in = min(stage_occupancy(p), p->input_size);
   if (num_in) {
     sample_t const * input = stage_read_p(p);
-    int i, num_out = (num_in * p->L - p->at.integer + p->step.integer - 1) / p->step.integer;
+    int at = p->at.integer, step = p->step.integer;
+    int i, num_out = (num_in * p->L - at + step - 1) / step;
     sample_t * __restrict output = fifo_reserve(output_fifo, num_out);
 
     CORE(N);
     assert(i == num_out);
-    fifo_read(&p->fifo, p->at.integer / p->L, NULL);
-    p->at.integer = p->at.integer % p->L;
+    fifo_read(&p->fifo, at / p->L, NULL);
+    p->at.integer = at % p->L;
   }
 }
 
