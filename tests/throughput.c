@@ -133,7 +133,7 @@ int main(int n, char const * arg[])
   soxr_delete(soxr);
   free(obuf), free(ibuf);
                                                               /* Diagnostics: */
-  fprintf(stderr, "%-26s %s; %lu clips; I/O: %s (%s) %.2f Ms/s\n",
+  fprintf(stderr, "%-26s %s; %lu clips; I/O: %s (%-5s) %.2f Ms/s\n",
       arg0, soxr_strerror(error), (long unsigned)clips,
       ferror(stdin) || ferror(stdout)? strerror(errno) : "no error", engine,
       1e-6 * k / DURATION_MSECS * chans * (double)omax);

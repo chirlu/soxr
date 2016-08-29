@@ -374,7 +374,7 @@ soxr_t soxr_create(
   char const * e = getenv("SOXR_TRACE");
   _soxr_trace_level = e? atoi(e) : 0;
   {
-    char const arch[] = {_(char), _(short), _(int), _(long), _(long long)
+    static char const arch[] = {_(char), _(short), _(int), _(long), _(long long)
       , ' ', _(float), _(double), _(long double)
       , ' ', _(int *), _(int (*)(int))
       , ' ', HAVE_BIGENDIAN ? 'B' : 'L'
