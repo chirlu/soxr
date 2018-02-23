@@ -1,4 +1,4 @@
-/* SoX Resampler Library      Copyright (c) 2007-16 robs@users.sourceforge.net
+/* SoX Resampler Library      Copyright (c) 2007-18 robs@users.sourceforge.net
  * Licence for this file: LGPL v2.1                  See LICENCE for details. */
 
 /* Example 4: variant of examples 2 & 3, demonstrating I/O with split channels.
@@ -14,7 +14,7 @@
  * Note also (not shown in the examples) that split/interleaved channels may
  * be used for input and output independently.
  *
- * Aguments are as example 3.
+ * Arguments are as example 3.
  */
 
 #include <soxr.h>

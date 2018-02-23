@@ -1,4 +1,4 @@
-/* SoX Resampler Library      Copyright (c) 2007-16 robs@users.sourceforge.net
+/* SoX Resampler Library      Copyright (c) 2007-18 robs@users.sourceforge.net
  * Licence for this file: LGPL v2.1                  See LICENCE for details. */
 
 /* Common includes etc. for the examples.  */
@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <limits.h>
-#include "math-wrap.h"
+#include <math.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,9 +35,13 @@
 #endif
 
 #undef min
-#undef max
 #define min(x,y) ((x)<(y)?(x):(y))
+
+#undef max
 #define max(x,y) ((x)>(y)?(x):(y))
 
 #undef AL
 #define AL(a) (sizeof(a)/sizeof((a)[0]))  /* Array Length */
+
+#undef M_PI /* Sometimes missing, so ensure that it is defined: */
+#define M_PI 3.14159265358979323846

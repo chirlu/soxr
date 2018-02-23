@@ -1,7 +1,7 @@
-# SoX Resampler Library       Copyright (c) 2007-16 robs@users.sourceforge.net
+# SoX Resampler Library       Copyright (c) 2007-18 robs@users.sourceforge.net
 # Licence for this file: LGPL v2.1                  See LICENCE for details.
 
-cmake_minimum_required (VERSION 3.0 FATAL_ERROR)
+cmake_minimum_required (VERSION 3.1 FATAL_ERROR)
 
 project (soxr C)
 set (DESCRIPTION_SUMMARY
@@ -74,11 +74,11 @@ cmake_dependent_option (BUILD_LSR_TESTS "Build LSR tests." OFF
 
 option (WITH_HI_PREC_CLOCK "Enable high-precision time-base." ON)
 option (WITH_FLOAT_STD_PREC_CLOCK
-	"Use floating-point for standard-precision time-base." OFF)
+  "Use floating-point for standard-precision time-base." OFF)
 option (WITH_DEV_TRACE "Enable developer trace capability." ON)
 option (WITH_DEV_GPROF "Enable developer grpof output." OFF)
 mark_as_advanced (WITH_HI_PREC_CLOCK WITH_FLOAT_STD_PREC_CLOCK
-       	WITH_DEV_TRACE WITH_DEV_GPROF)
+  WITH_DEV_TRACE WITH_DEV_GPROF)
 
 
 
@@ -328,7 +328,7 @@ if (UNIX)
   set (CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
   set (CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
   set (CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
-  set (CPACK_SOURCE_GENERATOR "TGZ") # Use TXZ (cmake 3.1) after 17-12-16
+  set (CPACK_SOURCE_GENERATOR "TXZ")
   set (CPACK_SOURCE_IGNORE_FILES
       "dist;/lsr-tests/;/Debug.*/;/Release.*/;\\\\.swp$;\\\\.git.*;/\\\\.git/")
   include (CPack)
