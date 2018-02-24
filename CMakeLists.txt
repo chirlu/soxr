@@ -13,7 +13,7 @@ set (DESCRIPTION_SUMMARY
 
 set (PROJECT_VERSION_MAJOR 0)
 set (PROJECT_VERSION_MINOR 1)
-set (PROJECT_VERSION_PATCH "3b1")
+set (PROJECT_VERSION_PATCH 3)
 
 # For shared-object; if, since the last public release:
 #   1) library code changed at all: ++revision
