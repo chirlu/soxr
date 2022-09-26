@@ -146,9 +146,11 @@ check_function_exists (lrint HAVE_LRINT)
 check_include_files (fenv.h HAVE_FENV_H)
 check_include_files (stdbool.h HAVE_STDBOOL_H)
 check_include_files (stdint.h HAVE_STDINT_H)
+if(EMSCRIPTEN)
+set(${HAVE_BIGENDIAN} 0 CACHE INTERNAL "Result of TEST_BIG_ENDIAN" FORCE)
+else ()
 test_big_endian (HAVE_BIGENDIAN)
-
-
+endif ()
 
 # Compiler configuration:
 
