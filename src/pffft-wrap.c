@@ -40,7 +40,12 @@ static void pffft_zconvolve(PFFFT_Setup *s, const float *a, const float *b, floa
 
   float ar, ai, br, bi;
 
-#ifdef __arm__
+#if defined(__arm__) || defined(__aarch64__) || defined(_M_ARM64)
+
+#if defined _MSC_VER
+#define __builtin_prefetch(_p)  __prefetch(_p)
+#endif
+
   __builtin_prefetch(va);
   __builtin_prefetch(vb);
   __builtin_prefetch(va+2);
